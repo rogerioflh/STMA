@@ -104,7 +104,7 @@ class Team:
             f" CNPJ: {self.cnpj}\n"
             f" Contato: {self.contact}\n"
             f" Endereço: {self.address}\n"
-            f"👨 Responsável: {self.responsible}"
+            f" Responsável: {self.responsible}"
         )
 
 
