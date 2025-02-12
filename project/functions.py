@@ -17,7 +17,7 @@ class Team:
             f" CNPJ: {self.cnpj}\n"
             f" Contato: {self.contact}\n"
             f" Endereço: {self.address}\n"
-            f"👨 Responsável: {self.responsible}"
+            f" Responsável: {self.responsible}"
         )
 
 class Competition:
@@ -51,7 +51,8 @@ class Competition:
         )
 
 class Inventory:
-    def __init__(self, type_object, sector, team, registration_year, last_use_date):
+    def __init__(self, id, type_object, sector, team, registration_year, last_use_date):
+        self.id = id
         self.type_object = type_object
         self.sector = sector
         self.team = team
@@ -69,6 +70,7 @@ class Inventory:
 
     def __str__(self):
         return (
+            f"ID: {self.id}\n"
             f" Objeto: {self.type_object}\n"
             f" Setor: {self.sector} |  Equipe: {self.team}\n"
             f" Ano de Registro: {self.registration_year} |  Último uso: {self.last_use_date}\n"
@@ -104,25 +106,70 @@ class Training:
             f" Status: {status_text}"
         )
         
-        
+def main():
+    while True:
+        print("\nEscolha uma opção para testar:")
+        print("1 - Criar uma Competição")
+        print("2 - Criar um Objeto de Inventário")
+        print("3 - Criar um Treino")
+        print("4 - Criar uma Equipe")
+        print("0 - Sair")
 
-# ------------------ Testes ------------------
+        escolha = input("Digite a opção: ")
 
-# Criando um evento de competição
-match = Competition("Futebol", "Estádio Central", "20/02/2025", "15:30", "Time B")
-print(match.schedule_match())
-print(match.check_status())
-print(match)
+        if escolha == "1":
+            type = input("Tipo da competição: ")
+            location = input("Local: ")
+            date = input("Data (DD/MM/AAAA): ")
+            time = input("Horário (HH:MM): ")
+            opponent = input("Adversário: ")
+            match = Competition(type, location, date, time, opponent)
+            print(match.schedule_match())
+            print(match.check_status())
+            print(match)
 
-# Criando um objeto de inventário
-item = Inventory("Bola de Futebol", "Armazém", "Equipe A", 2022, "10/02/2025")
-print(item.register_object())
-print(item)
-print(f"Status de disponibilidade: {item.availability_request()}")
+        elif escolha == "2":
+            type_object = input("Tipo do objeto: ")
+            sector = input("Setor: ")
+            team = input("Equipe responsável: ")
+            registration_year = input("Ano de registro: ")
+            last_use_date = input("Última data de uso (DD/MM/AAAA): ")
+            item = Inventory(type_object, sector, team, registration_year, last_use_date)
+            print(item.register_object())
+            print(item)
+            print(f"Status de disponibilidade: {item.availability_request()}")
 
-# Criando um treino
-training = Training("Força", "15/02/2025", "18:00", 60, "Academia", "Coach João")
-print(training.schedule())
-print(training)
-training.mark_completed()
-print(training)
+        elif escolha == "3":
+            type = input("Tipo do treino: ")
+            date = input("Data (DD/MM/AAAA): ")
+            time = input("Horário (HH:MM): ")
+            duration = int(input("Duração em minutos: "))
+            location = input("Local: ")
+            professional = input("Profissional responsável: ")
+            training = Training(type, date, time, duration, location, professional)
+            print(training.schedule())
+            print(training)
+            finalizar = input("Deseja marcar o treino como concluído? (s/n): ")
+            if finalizar.lower() == 's':
+                training.mark_completed()
+            print(training)
+
+        elif escolha == "4":
+            name = input("Nome da equipe: ")
+            cnpj = input("CNPJ: ")
+            contact = input("Contato: ")
+            address = input("Endereço: ")
+            responsible = input("Responsável: ")
+            team = Team(name, cnpj, contact, address, responsible)
+            print(team.get_info())
+            print(team)
+
+        elif escolha == "0":
+            print("Saindo...")
+            break
+
+        else:
+            print("Opção inválida, tente novamente.")
+
+if __name__ == "__main__":
+    main()

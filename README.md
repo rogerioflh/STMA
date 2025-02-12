@@ -22,6 +22,7 @@
 
 **Required resources** : Any version from Python 3 onwards
 
+
 **Implemeted features:**
 
 * Register sports team profile: Create a profile with the team information that will be managed through the application;
@@ -30,7 +31,7 @@ This feature allows teams to register in the application to start managing their
 
 * Equipment Inventory Management: Tracking and managing sports equipment;
 
-In this functionality we will use the **inventory class**, where we will have the attributes object type, sector, responsible team, registration date, date of last use; In addition to the methods register new object, check availability and request object;
+In this functionality we will use the **inventory class**, where we will have the attributes id, object type, sector, responsible team, registration date, date of last use; In addition to the methods register new object, check availability and request object;
 
 * Training Schedule Management: Organizing and managing training sessions;
 
