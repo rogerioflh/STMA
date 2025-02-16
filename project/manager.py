@@ -6,24 +6,18 @@ from models.healthMonitor import HealthMonitor
 from models.inventory import Inventory
 from models.matchScheduler import MatchScheduler
 from models.mediaManager import MediaManager
-from models.performance import Performance
+from models.performanceTracker import Performance
 from models.player import Player
 from models.recruitmentPlayer import RecruitmentManager
 from models.trainingmanager import TrainingManager
 
 
-def carregar_dados():
-    """Carrega todos os dados dos arquivos JSON."""
+def load_data():
     Player.load_from_json()
     MatchScheduler.load_from_json()
-''' Financial.load_from_json()
-    TrainingManager.load_from_json()
-    HealthMonitor.load_from_json()
+    Financial.load_from_json()
     Inventory.load_from_json()
-    RecruitmentManager.load_from_json()
-    MediaManager.load_from_json()
-    MatchScheduler.load_from_json()
-    Performance.load_from_json() '''
+    TrainingManager.load_from_json()
     
 def menu_principal():
     while True:
@@ -76,16 +70,14 @@ def menu_jogadores():
         if escolha == "1":
             nome = input("Nome do jogador: ")
             posicao = input("Posição do jogador: ")
-            stats = input("Estatísticas (formato JSON, ex: {'gols': 5, 'assistências': 3}): ")
-            stats = json.loads(stats) if stats else {}
-            Player(nome, posicao, stats)
+            Player(nome, posicao)
             print("Jogador adicionado com sucesso!")
         elif escolha == "2":
             for jogador in Player.players_list:
                 print(jogador)
         elif escolha == "3":
             nome = input("Nome do jogador: ")
-            for jogador in Player.players_list:
+            '''  for jogador in Player.players_list:
                 if jogador.name == nome:
                     novas_stats = input("Novas estatísticas (formato JSON, ex: {'gols': 2}): ")
                     novas_stats = json.loads(novas_stats) if novas_stats else {}
@@ -93,7 +85,7 @@ def menu_jogadores():
                     print("Estatísticas atualizadas!")
                     break
             else:
-                print("Jogador não encontrado.")
+                print("Jogador não encontrado.") '''
         elif escolha == "4":
             break
         else:
@@ -238,23 +230,21 @@ def menu_recrutamento():
             nome = input("Nome do prospecto: ")
             posicao = input("Posição: ")
             idade = int(input("Idade: "))
-            stats = input("Estatísticas (formato JSON, ex: {'gols': 5}): ")
-            stats = json.loads(stats) if stats else {}
-            RecruitmentManager(nome, posicao, idade, stats)
+            RecruitmentManager(nome, posicao, idade)
             print("Prospecto adicionado!")
         elif escolha == "2":
             for prospecto in RecruitmentManager.prospects_list:
                 print(prospecto)
         elif escolha == "3":
-            nome = input("Nome do prospecto: ")
+            nome = input("Nome do atleta: ")
             for prospecto in RecruitmentManager.prospects_list:
                 if prospecto.name == nome:
                     avaliacao = input("Avaliação: ")
                     prospecto.evaluate_prospect(avaliacao)
-                    print("Prospecto avaliado!")
+                    print("atleta avaliado!")
                     break
             else:
-                print("Prospecto não encontrado.")
+                print("atleta não encontrado.")
         elif escolha == "4":
             break
         else:
@@ -352,23 +342,18 @@ def menu_desempenho():
             
 import atexit
 
-def salvar_dados():
-    """Salva todos os dados nos arquivos JSON."""
+def save_data():
     Player.save_to_json()
     MatchScheduler.save_to_json()
-    ''' Financial.save_to_json()
-    TrainingManager.save_to_json()
-    HealthMonitor.save_to_json()
+    Financial.save_to_json()
     Inventory.save_to_json()
-    RecruitmentManager.save_to_json()
-    MediaManager.save_to_json()
-    Performance.save_to_json() '''
+    TrainingManager.save_to_json()
 
-atexit.register(salvar_dados)
+atexit.register(save_data)
 
 # Iniciar o menu principal
 if __name__ == "__main__":
-    carregar_dados()
-    salvar_dados()
+    load_data()
+    save_data()
     menu_principal()
     

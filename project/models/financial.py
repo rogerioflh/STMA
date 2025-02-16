@@ -1,4 +1,4 @@
-
+import json
 #Gerenciamento financeiro da equipe
 class Financial:
     financial_records = []  
@@ -14,32 +14,30 @@ class Financial:
             "viagens": 0, 
         }
         Financial.financial_records.append(self) 
+        Financial.save_to_json()
 
     def set_annual_revenue(self, revenue):
-        """Define o faturamento anual."""
         self.annual_revenue = revenue
+        Financial.save_to_json()
 
     def set_monthly_revenue(self, revenue):
-        """Define o faturamento mensal."""
         self.monthly_revenue = revenue
+        Financial.save_to_json()
 
     def add_monthly_expense(self, category, amount):
-        """Adiciona um gasto mensal a uma categoria específica."""
         if category in self.monthly_expenses:
             self.monthly_expenses[category] += amount
+            Financial.save_to_json()
         else:
             raise ValueError(f"Categoria '{category}' não existe.")
 
     def get_monthly_expenses(self):
-        """Retorna todos os gastos mensais."""
         return self.monthly_expenses
 
     def get_total_monthly_expenses(self):
-        """Retorna o total de gastos mensais."""
         return sum(self.monthly_expenses.values())
 
     def get_financial_summary(self):
-        """Retorna um resumo financeiro."""
         return {
             "Faturamento Anual": self.annual_revenue,
             "Faturamento Mensal": self.monthly_revenue,
@@ -49,7 +47,6 @@ class Financial:
         }
 
     def add_financial_record(self, description, amount, date):
-        """Adiciona um registro financeiro."""
         record = {
             "description": description,
             "amount": amount,
@@ -58,11 +55,39 @@ class Financial:
         Financial.financial_records.append(record)
 
     def get_financial_records(self):
-        """Retorna todos os registros financeiros."""
         return Financial.financial_records
 
+    @classmethod
+    def save_to_json(cls, filename="financial.json"):
+        """Salva os dados financeiros em um arquivo JSON."""
+        with open(filename, "w") as file:
+            json.dump([finance.to_dict() for finance in cls.financial_records], file, indent=4)
+
+    @classmethod
+    def load_from_json(cls, filename="financial.json"):
+        """Carrega os dados financeiros de um arquivo JSON."""
+        try:
+            with open(filename, "r") as file:
+                data = json.load(file)
+                cls.financial_records = []
+                for item in data:
+                    finance = Financial()
+                    finance.set_annual_revenue(item["annual_revenue"])
+                    finance.set_monthly_revenue(item["monthly_revenue"])
+                    for category, amount in item["monthly_expenses"].items():
+                        finance.add_monthly_expense(category, amount)
+                    cls.financial_records.append(finance)
+        except FileNotFoundError:
+            print(f"Arquivo {filename} não encontrado. Iniciando com lista vazia.")
+
+    def to_dict(self):
+        """Converte o objeto FinancialManager em um dicionário."""
+        return {
+            "annual_revenue": self.annual_revenue,
+            "monthly_revenue": self.monthly_revenue,
+            "monthly_expenses": self.monthly_expenses
+        }
     def __str__(self):
-        """Representação textual da classe."""
         summary = self.get_financial_summary()
         return (
             f" Resumo Financeiro:\n"
