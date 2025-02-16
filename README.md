@@ -27,31 +27,40 @@
 
 
 1. Team Roster Management
+
 * Implemented class: Player
 
 2. Match Scheduling
+
 * Implemented class: MatchScheduler
 
 3. Performance Tracking
+
 * Implemented class: Performance
 
 4. Injury and Health Monitoring
+
 * Implemented class: HealthMonitor
 
 5. Training Schedule Management
+
 * Implemented class: TrainingManager
 
 6. Equipment Inventory Management
+
 * Implemented class: Inventory
 
 7. Player Recruitment
+
 * Implemented class: RecruitmentManager
 
 
 8. Financial Management
+
 * Implemented class: Financial
 
 9. Media and Public Relations
+
 * Implemented class: MediaManager
 
 
