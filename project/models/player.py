@@ -3,18 +3,18 @@ from datetime import datetime
 # Gerenciar informações sobre atletas da equipe
 
 class Player:
-    players_list = []  # Lista para armazenar todos os jogadores
+    players_list = []  
 
     def __init__(self, name, position, stats=None):
         self.name = name
         self.position = position
         self.stats = stats if stats else {}
         Player.players_list.append(self)
-        Player.save_to_json()  # Salva automaticamente após adicionar um jogador
+        Player.save_to_json() 
 
     def update_stats(self, new_stats):
         self.stats.update(new_stats)
-        Player.save_to_json()  # Salva automaticamente após atualizar estatísticas
+        Player.save_to_json()  
 
     @classmethod
     def save_to_json(cls, filename="players.json"):

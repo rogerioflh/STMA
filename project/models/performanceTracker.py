@@ -33,7 +33,7 @@ class Performance:
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                cls.performance_data = {}  # Limpa os dados antes de recarregar os registros
+                cls.performance_data = {} 
                 for item in data:
                     performance_record = Performance(item["player_name"], item["performance_metrics"])
                     cls.performance_data[item["player_name"]] = performance_record

@@ -21,7 +21,6 @@ class Inventory:
         Inventory.save_to_json() 
         return f"Disponibilidade de {self.type_object} alterada para {self.available}."
     def to_dict(self):
-        """Converte o objeto Inventory para um dicionário serializável em JSON."""
         return {
             "id": self.id,
             "type_object": self.type_object,
