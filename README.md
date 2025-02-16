@@ -29,22 +29,30 @@
 1. Team Roster Management
 * Implemented class: Player
 
-* Match Scheduling: Organizing and scheduling matches or tournaments;
+2. Match Scheduling
+* Implemented class: MatchScheduler
 
-* Performance Tracking: Tracking and analyzing player and team performance metrics;
+3. Performance Tracking
+* Implemented class: Performance
 
-* Injury and Health Monitoring: Monitoring player health and injury reports;
+4. Injury and Health Monitoring
+* Implemented class: HealthMonitor
 
-* Training Schedule Management: Organizing and managing training sessions;
+5. Training Schedule Management
+* Implemented class: TrainingManager
 
-* Equipment Inventory Management: Tracking and managing sports equipment;
+6. Equipment Inventory Management
+* Implemented class: Inventory
 
-* Player Recruitment: Managing the process of scouting and recruiting new players;
+7. Player Recruitment
+* Implemented class: RecruitmentManager
 
 
-* Financial Management: Managing team finances, including budgets and expenditures;
+8. Financial Management
+* Implemented class: Financial
 
-* Media and Public Relations: Handling media releases and public relations activities.
+9. Media and Public Relations
+* Implemented class: MediaManager
 
 
 
