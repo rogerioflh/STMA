@@ -26,7 +26,8 @@
 **Implemeted features:**
 
 
-* Team Roster Management: Managing player profiles, positions, and stats;
+1. Team Roster Management
+* Implemented class: Player
 
 * Match Scheduling: Organizing and scheduling matches or tournaments;
 
