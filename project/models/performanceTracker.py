@@ -1,8 +1,9 @@
 import json
+# from player import Player
 # Acompanhar desempenho dos atletas e da equipe
 
 class Performance:
-    performance_data = {}  
+    performance_data = {} 
 
     def __init__(self, player, performance_metrics):
         self.player = player

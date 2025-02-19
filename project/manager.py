@@ -11,7 +11,7 @@ from models.player import Player
 from models.recruitmentPlayer import RecruitmentManager
 from models.trainingmanager import TrainingManager
 
-
+# carregamento de dados do json
 def load_data():
     Player.load_from_json()
     MatchScheduler.load_from_json()
@@ -30,28 +30,37 @@ def menu_principal():
         print("6. Recrutamento de Jogadores")
         print("7. Gerenciamento de Mídia")
         print("8. Gerenciamneto de Partidas")
-        print("9. Gerenciamneto de Desempenho")
+        print("9. Gerenciamento de Desempenho")
         print("0. Sair")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
             menu_jogadores()
+            
         elif escolha == "2":
             menu_financeiro()
+            
         elif escolha == "3":
             menu_treinamentos()
+            
         elif escolha == "4":
             menu_saude()
+            
         elif escolha == "5":
             menu_equipamentos()
+            
         elif escolha == "6":
             menu_recrutamento()
+            
         elif escolha == "7":
             menu_midia()
+            
         elif escolha == "8":
             menu_partidas()
+            
         elif escolha == "9":
             menu_desempenho()
+            
         elif escolha == "0":
             print("Saindo...")
             break
@@ -65,27 +74,56 @@ def menu_jogadores():
         print("2. Ver Jogadores")
         print("3. Atualizar Estatísticas")
         print("4. Voltar ao Menu Principal")
+        
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
             nome = input("Nome do jogador: ")
             posicao = input("Posição do jogador: ")
-            Player(nome, posicao)
+            passes = input("Passes certos: ")
+            gols = input("Gols: ")
+            assistencias = input("Número de assistencias: ")
+            metros = input("Metros percorridos pelo atleta: ")
+            Player(nome, posicao, passes, gols, assistencias, metros)
             print("Jogador adicionado com sucesso!")
+            
         elif escolha == "2":
             for jogador in Player.players_list:
                 print(jogador)
+                
         elif escolha == "3":
             nome = input("Nome do jogador: ")
-            '''  for jogador in Player.players_list:
+            
+            for jogador in Player.players_list:
                 if jogador.name == nome:
-                    novas_stats = input("Novas estatísticas (formato JSON, ex: {'gols': 2}): ")
-                    novas_stats = json.loads(novas_stats) if novas_stats else {}
-                    jogador.update_stats(novas_stats)
-                    print("Estatísticas atualizadas!")
-                    break
+                    print("Selecione qual estatística deseja atualizar: ")
+                    print("1. Passes")
+                    print("2. Gols")
+                    print("3. Assistências")
+                    print("4. Metros percorridos")
+                    escolha = input("Escolha uma opção: ")
+                    
+                    if escolha == "1":
+                        passes = input("Passes certos: ")
+                        jogador.passes = passes
+                        
+                    elif escolha =="2":
+                        gols = input("Gols: ")
+                        jogador.goals = gols
+                        
+                    elif escolha =="3":
+                        assistencias = input("Número de assistencias: ")
+                        jogador.assists = assistencias
+                        
+                    elif escolha=="4":
+                        metros = input("Metros percorridos pelo atleta: ")
+                        jogador.meters = metros
+                        
+                break
+                
             else:
-                print("Jogador não encontrado.") '''
+                print("Jogador não encontrado.") 
+                
         elif escolha == "4":
             break
         else:

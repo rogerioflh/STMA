@@ -1,5 +1,5 @@
 import json
-# Gerenciar possíveis recrutamento de atletas
+# Gerenciar possíveis atletas a serem recrutados 
 class RecruitmentManager:
     prospects_list = []  
 
@@ -45,8 +45,8 @@ class RecruitmentManager:
     
     def __str__(self):
         return (
-            f" Prospecto: {self.name}\n"
-            f" Posição: {self.position}\n"
+            f" Nome da possível contratação: {self.name}\n"
+            f" Posição em que atua: {self.position}\n"
             f" Idade: {self.age}\n"
             f" Estatísticas: {self.stats}"
         )

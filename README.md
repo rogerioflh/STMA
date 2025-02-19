@@ -54,7 +54,6 @@
 
 - Implemented class: RecruitmentManager
 
-
 8. Financial Management
 
 - Implemented class: Financial
