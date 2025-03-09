@@ -10,6 +10,7 @@ from models.player import Player
 from models.performance import Performance
 from models.recruitmentPlayer import RecruitmentManager
 from models.trainingmanager import TrainingManager
+from models.event import Event
 
 # carregamento de dados do json
 def load_data():
@@ -125,7 +126,8 @@ def menu_treinamentos():
         print("1. Agendar Treinamento")
         print("2. Ver Treinamentos")
         print("3. Marcar Treinamento como Concluído")
-        print("4. Voltar ao Menu Principal")
+        print("4. Verificar Status do Treinamento")
+        print("0. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -144,12 +146,19 @@ def menu_treinamentos():
             tipo = input("Tipo de treinamento: ")
             for treinamento in TrainingManager.training_sessions:
                 if treinamento.type == tipo:
-                    treinamento.mark_completed()
-                    print("Treinamento marcado como concluído!")
+                    print(treinamento.mark_completed())
                     break
             else:
                 print("Treinamento não encontrado.")
         elif escolha == "4":
+            tipo = input("Tipo de treinamento: ")
+            for treinamento in TrainingManager.training_sessions:
+                if treinamento.type == tipo:
+                    print(treinamento.check_status())
+                    break
+            else:
+                print("Treinamento não encontrado.")
+        elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
@@ -279,7 +288,8 @@ def menu_partidas():
         print("1. Agendar Partida")
         print("2. Ver Partidas Agendadas")
         print("3. Verificar Status da Partida")
-        print("4. Voltar ao Menu Principal")
+        print("4. Marcar partida como concluída")
+        print("0. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -301,7 +311,16 @@ def menu_partidas():
                     break
             else:
                 print("Partida não encontrada.")
+                
         elif escolha == "4":
+            tipo = input("Tipo da partida: ")
+            for partida in MatchScheduler.competitions_list:
+                if partida.type == tipo:
+                    print(partida.mark_as_completed())
+                    break
+            else:
+                print("Partida não encontrada.")
+        elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
