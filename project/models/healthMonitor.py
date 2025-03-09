@@ -23,6 +23,7 @@ class HealthMonitor:
         }
 
     @classmethod
+    
     def save_to_json(cls, filename="health_records.json"):
         with open(filename, "w") as file:
          json.dump([record.to_dict() for record in cls.health_records.values() if isinstance(record, HealthMonitor)], file, indent=4)

@@ -6,8 +6,7 @@ from models.healthMonitor import HealthMonitor
 from models.inventory import Inventory
 from models.matchScheduler import MatchScheduler
 from models.mediaManager import MediaManager
-from models.performanceTracker import Performance
-from models.player import Player
+from models.player import Player, Performance
 from models.recruitmentPlayer import RecruitmentManager
 from models.trainingmanager import TrainingManager
 
@@ -68,63 +67,32 @@ def menu_principal():
             print("Opção inválida. Tente novamente.")
 
 def menu_jogadores():
-    while True:
+   while True:
         print("\n--- Gerenciamento de Jogadores ---")
         print("1. Adicionar Jogador")
         print("2. Ver Jogadores")
-        print("3. Atualizar Estatísticas")
-        print("4. Voltar ao Menu Principal")
+        print("3. Voltar ao Menu Principal")
         
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
             nome = input("Nome do jogador: ")
             posicao = input("Posição do jogador: ")
-            passes = input("Passes certos: ")
-            gols = input("Gols: ")
-            assistencias = input("Número de assistencias: ")
-            metros = input("Metros percorridos pelo atleta: ")
+            passes = int(input("Passes certos: "))
+            gols = int(input("Gols: "))
+            assistencias = int(input("Número de assistências: "))
+            metros = int(input("Metros percorridos pelo atleta: "))
             Player(nome, posicao, passes, gols, assistencias, metros)
             print("Jogador adicionado com sucesso!")
             
         elif escolha == "2":
-            for jogador in Player.players_list:
-                print(jogador)
+            if not Player.players_list:
+                print("Nenhum jogador cadastrado.")
+            else:
+                for jogador in Player.players_list:
+                    print(jogador)
                 
         elif escolha == "3":
-            nome = input("Nome do jogador: ")
-            
-            for jogador in Player.players_list:
-                if jogador.name == nome:
-                    print("Selecione qual estatística deseja atualizar: ")
-                    print("1. Passes")
-                    print("2. Gols")
-                    print("3. Assistências")
-                    print("4. Metros percorridos")
-                    escolha = input("Escolha uma opção: ")
-                    
-                    if escolha == "1":
-                        passes = input("Passes certos: ")
-                        jogador.passes = passes
-                        
-                    elif escolha =="2":
-                        gols = input("Gols: ")
-                        jogador.goals = gols
-                        
-                    elif escolha =="3":
-                        assistencias = input("Número de assistencias: ")
-                        jogador.assists = assistencias
-                        
-                    elif escolha=="4":
-                        metros = input("Metros percorridos pelo atleta: ")
-                        jogador.meters = metros
-                        
-                break
-                
-            else:
-                print("Jogador não encontrado.") 
-                
-        elif escolha == "4":
             break
         else:
             print("Opção inválida. Tente novamente.")
@@ -347,33 +315,82 @@ def menu_desempenho():
     while True:
         print("\n--- Acompanhamento de Desempenho ---")
         print("1. Registrar Desempenho")
-        print("2. Ver Desempenho de um Jogador")
-        print("3. Voltar ao Menu Principal")
+        print("2. Atualizar Estatísticas de Desempenho")
+        print("3. Ver Desempenho de um Jogador")
+        print("4. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
             nome = input("Nome do jogador: ")
+            jogador_encontrado = None
             for jogador in Player.players_list:
                 if jogador.name == nome:
-                    metricas = input("Métricas de desempenho: ")
-                    metricas = json.loads(metricas) if metricas else {}
-                    Performance(jogador, metricas)
-                    print("Desempenho registrado!")
+                    jogador_encontrado = jogador
                     break
+            if jogador_encontrado:
+                # Solicita cada métrica individualmente
+                acertos_passe = int(input("Acertos de passe: "))
+                desarmes = int(input("Desarmes: "))
+                finalizacoes = int(input("Finalizações: "))
+                defesas = int(input("Defesas: "))
+
+                # Cria um dicionário com as métricas
+                metricas = {
+                    "acertos_passe": acertos_passe,
+                    "desarmes": desarmes,
+                    "finalizacoes": finalizacoes,
+                    "defesas": defesas
+                }
+
+                # Atualiza o desempenho do jogador
+                jogador_encontrado.update_performance(metricas)
+                print("Desempenho registrado!")
             else:
                 print("Jogador não encontrado.")
         elif escolha == "2":
             nome = input("Nome do jogador: ")
+            jogador_encontrado = None
             for jogador in Player.players_list:
                 if jogador.name == nome:
-                    if jogador.name in Performance.performance_data:
-                        print(Performance.performance_data[jogador.name])
-                    else:
-                        print("Nenhum desempenho registrado.")
+                    jogador_encontrado = jogador
                     break
+            if jogador_encontrado:
+                print("Selecione qual métrica deseja atualizar: ")
+                print("1. Acertos de passe")
+                print("2. Desarmes")
+                print("3. Finalizações")
+                print("4. Defesas")
+                escolha = input("Escolha uma opção: ")
+                
+                if escolha == "1":
+                    acertos_passe = int(input("Novo valor para acertos de passe: "))
+                    jogador_encontrado.performance["acertos_passe"] = acertos_passe
+                elif escolha == "2":
+                    desarmes = int(input("Novo valor para desarmes: "))
+                    jogador_encontrado.performance["desarmes"] = desarmes
+                elif escolha == "3":
+                    finalizacoes = int(input("Novo valor para finalizações: "))
+                    jogador_encontrado.performance["finalizacoes"] = finalizacoes
+                elif escolha == "4":
+                    defesas = int(input("Novo valor para defesas: "))
+                    jogador_encontrado.performance["defesas"] = defesas
+                else:
+                    print("Opção inválida.")
+                jogador_encontrado.update_performance({})  # Salva as alterações
             else:
                 print("Jogador não encontrado.")
         elif escolha == "3":
+            nome = input("Nome do jogador: ")
+            jogador_encontrado = None
+            for jogador in Player.players_list:
+                if jogador.name == nome:
+                    jogador_encontrado = jogador
+                    break
+            if jogador_encontrado:
+                print(jogador_encontrado)
+            else:
+                print("Jogador não encontrado.")
+        elif escolha == "4":
             break
         else:
             print("Opção inválida. Tente novamente.")
