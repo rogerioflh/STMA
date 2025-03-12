@@ -123,7 +123,6 @@ class Inventory:
             f" Status: {'Disponível' if self._available else 'Indisponível'}"
         )
 
-    # buscar equipamento por ID
     @classmethod
     def get_equipment_by_id(cls, equipment_id):
         return cls._inventory.get(equipment_id)

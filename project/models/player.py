@@ -1,7 +1,5 @@
 import json
 
-import json
-
 class Player:
     players_list = []  
     def __init__(self, name, age, height, weight, position):

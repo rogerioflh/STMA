@@ -1,0 +1,8 @@
+Implementação de conceitos de herança e polimorfismo:
+
+1- classe base: event
+1.1 - subclasse matches
+1.2 - subclasse trainning
+
+atributos da classe base: type, date, time, location;
+

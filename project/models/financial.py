@@ -143,7 +143,7 @@ class Financial:
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                finance = cls()  # Cria uma nova instância da classe Financial
+                finance = cls()  
                 if isinstance(data, dict):  
                     finance._annual_revenue = data.get("annual_revenue", 0)
                     finance._monthly_revenue = data.get("monthly_revenue", 0)

@@ -323,12 +323,12 @@ def menu_treinamentos():
             id_evento = input("Digite o ID do treino que deseja consultar: ")
             found = False
             for treinamento in TrainingManager.training_sessions:
-                if treinamento.id == id_evento:
-                    print(treinamento.check_status())  # Exibe o status do evento
+                if treinamento.get_id() == id_evento:  
+                    print(treinamento.check_status())  
                     found = True
                     break
-            if not found:
-                print("Treino não encontrado.")
+                if not found:
+                    print("Treino não encontrado.")
         elif escolha == "5":
             id_evento = input("Digite o ID do treino que deseja atualizar: ")
             for treinamento in TrainingManager.training_sessions:
@@ -343,7 +343,7 @@ def menu_treinamentos():
             print("Opção inválida. Tente novamente.")
 
 def menu_equipamentos():
-    Inventory.load_from_json()  # Carrega os dados do JSON ao iniciar o menu
+    Inventory.load_from_json()  
     while True:
         print("\n  Gerenciamento de equipamentos do time\n")
         print("1. Adicionar um novo equipamento ao estoque")
@@ -613,11 +613,11 @@ def menu_partidas():
         elif escolha == "3":
             id_evento = input("Digite o ID da partida que deseja consultar: ")
             for partida in MatchScheduler.competitions_list:
-                 if partida.id == id_evento:
-                    print(partida.check_status())
+                if partida.get_id() == id_evento:  
+                    print(partida.check_status())  
                     break
-            else:
-                print("Partida não encontrada.")
+                else:
+                    print("Partida não encontrada.")
                 
         elif escolha == "4":
             id_evento = input("Digite o ID da partida que deseja concluir: ")
@@ -680,7 +680,6 @@ def save_data():
 
 atexit.register(save_data)
 
-# Iniciar o menu principal
 if __name__ == "__main__":
     load_data()
     save_data()
