@@ -62,6 +62,9 @@
 
 - Implemented class: MediaManager
 
+10. Fan Engagement Tools
+
+-It was not implemented because I did not find an interesting way to show this correctly in this version.
 
 
 

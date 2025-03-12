@@ -56,7 +56,7 @@ class Event(ABC):
 
     @abstractmethod
     def check_status(self):
-        """Método abstrato para verificar o status do evento."""
+        #Método abstrato para verificar o status do evento.
         pass
 
     def to_dict(self):
