@@ -2,12 +2,12 @@ import json
 from models.player import Player
 
 class HealthMonitor:
-    health_records = {}  # Dicionário para armazenar registros de saúde
+    health_records = {}  
 
     def __init__(self, player, injury_report):
-        self.player = player  # Referência ao jogador
+        self.player = player  
         self.injury_report = injury_report
-        HealthMonitor.health_records[player.name] = self  # Armazena o registro no dicionário
+        HealthMonitor.health_records[player.name] = self 
 
     def update_info(self, injury_report):
         self.injury_report = injury_report
@@ -16,9 +16,9 @@ class HealthMonitor:
     def get_health_status(self):
         return self.injury_report
 
-    def to_dict(self):
+    def to_dici(self):
         return {
-            "player_name": self.player.name,  # Acessa o nome do jogador através do atributo player
+            "player_name": self.player.name,  
             "injury_report": self.injury_report
         }
 

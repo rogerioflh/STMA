@@ -1,10 +1,11 @@
 import json
 
 class RecruitmentManager:
-    _prospects_list = []  # Atributo de classe encapsulado
+    
+    _prospects_list = []  
 
     def __init__(self, name, position, age, stats=None):
-        self._name = name  # Atributo encapsulado
+        self._name = name  
         self._position = position
         self._age = age
         self._stats = stats if stats else {}
@@ -87,7 +88,7 @@ class RecruitmentManager:
             f" Estatísticas: {self._stats}"
         )
 
-    # Método para buscar atleta por nome
+    # buscar atleta por nome
     @classmethod
     def get_prospect_by_name(cls, name):
         for prospect in cls._prospects_list:

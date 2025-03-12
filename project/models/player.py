@@ -3,8 +3,7 @@ import json
 import json
 
 class Player:
-    players_list = []  # Lista para armazenar todos os jogadores
-
+    players_list = []  
     def __init__(self, name, age, height, weight, position):
         self.name = name
         self.age = age
@@ -26,14 +25,13 @@ class Player:
                 data = json.load(file)
                 cls.players_list = []
                 for player in data:
-                    # Verifica se todas as chaves necessárias estão presentes
+                    
                     name = player.get("name", "Desconhecido")
-                    age = player.get("age", 0)  # Valor padrão se 'age' não existir
-                    height = player.get("height", 0.0)  # Valor padrão se 'height' não existir
-                    weight = player.get("weight", 0.0)  # Valor padrão se 'weight' não existir
-                    position = player.get("position", "Desconhecida")  # Valor padrão se 'position' não existir
+                    age = player.get("age", 0)  
+                    height = player.get("height", 0.0)  
+                    weight = player.get("weight", 0.0)  
+                    position = player.get("position", "Desconhecida")  
 
-                    # Cria o jogador com os dados do JSON (ou valores padrão)
                     Player(name, age, height, weight, position)
         except FileNotFoundError:
             print(f"Arquivo {filename} não encontrado. Iniciando com lista vazia.")

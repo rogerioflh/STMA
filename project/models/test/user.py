@@ -3,7 +3,7 @@ class Usuario:
         self.nome = nome
         self.username = username
         self.password = password  
-        self.role = role  # Papel do usuário (ex: "técnico", "atleta", "secretário", "gerente")
+        self.role = role  
 
     def autenticar(self, username, password):
         return self.username == username and self.password == password
@@ -14,7 +14,7 @@ class Usuario:
 class Tecnico(Usuario):
     def __init__(self, nome, username, password, especializacao):
         super().__init__(nome, username, password, role="técnico")
-        self.especializacao = especializacao  # Ex: "futebol", "vôlei", etc.
+        self.especializacao = especializacao  
 
     def __str__(self):
         return super().__str__() + f", Especialização: {self.especializacao}"
@@ -22,7 +22,7 @@ class Tecnico(Usuario):
 class Atleta(Usuario):
     def __init__(self, nome, username, password, posicao):
         super().__init__(nome, username, password, role="atleta")
-        self.posicao = posicao  # Ex: "atacante", "goleiro", etc.
+        self.posicao = posicao  
 
     def __str__(self):
         return super().__str__() + f", Posição: {self.posicao}"
@@ -30,7 +30,7 @@ class Atleta(Usuario):
 class SecretarioFinanceiro(Usuario):
     def __init__(self, nome, username, password, setor):
         super().__init__(nome, username, password, role="secretário financeiro")
-        self.setor = setor  # Ex: "contabilidade", "folha de pagamento", etc.
+        self.setor = setor 
 
     def __str__(self):
         return super().__str__() + f", Setor: {self.setor}"
@@ -38,7 +38,7 @@ class SecretarioFinanceiro(Usuario):
 class Gerente(Usuario):
     def __init__(self, nome, username, password, departamento):
         super().__init__(nome, username, password, role="gerente")
-        self.departamento = departamento  # Ex: "futebol", "marketing", etc.
+        self.departamento = departamento 
 
     def __str__(self):
         return super().__str__() + f", Departamento: {self.departamento}"
@@ -48,7 +48,47 @@ import json
 class GerenciadorUsuarios:
     def __init__(self):
         self.usuarios = []
+    def __init__(self):
+        self.usuarios = []
+        self.carregar_usuarios()
 
+    def autenticar_usuario(self, username, password):
+        """Autentica um usuário e retorna o objeto do usuário ou None se falhar."""
+        for usuario in self.usuarios:
+            if usuario.username == username and usuario.password == password:
+                return usuario  
+        return None
+    
+    def criar_usuario(gerenciador):
+        """Permite ao usuário criar um novo login no sistema"""
+        print("\n Criar Novo Usuário")
+        nome = input("Nome completo: ")
+        username = input("Username: ")
+        password = input("Senha: ")
+
+        print("Escolha um tipo de usuário:")
+        print("1 - Técnico")
+        print("2 - Atleta")
+        print("3 - Secretário Financeiro")
+        print("4 - Gerente")
+
+        tipo = input("Digite o número da opção: ")
+
+        if tipo == "1":
+            usuario = Tecnico(nome, username, password, "especialização indefinida")
+        elif tipo == "2":
+            usuario = Atleta(nome, username, password, "posição indefinida")
+        elif tipo == "3":
+            usuario = SecretarioFinanceiro(nome, username, password, "setor indefinido")
+        elif tipo == "4":
+            usuario = Gerente(nome, username, password, "departamento indefinido")
+        else:
+            print(" Tipo inválido!")
+            return
+
+        gerenciador.adicionar_usuario(usuario)
+        print(" Usuário criado com sucesso! Agora você pode fazer login.")
+    
     def adicionar_usuario(self, usuario):
         self.usuarios.append(usuario)
 

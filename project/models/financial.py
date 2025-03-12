@@ -14,9 +14,9 @@ class Financial:
             "manutencao": 0,  
             "viagens": 0,  
         }
-        self._financial_goals = {}  # Metas financeiras
+        self._financial_goals = {} 
 
-    # Propriedades para encapsulamento
+   
     @property
     def annual_revenue(self):
         return self._annual_revenue
@@ -144,13 +144,13 @@ class Financial:
             with open(filename, "r") as file:
                 data = json.load(file)
                 finance = cls()  # Cria uma nova instância da classe Financial
-                if isinstance(data, dict):  # Se o JSON for um dicionário
+                if isinstance(data, dict):  
                     finance._annual_revenue = data.get("annual_revenue", 0)
                     finance._monthly_revenue = data.get("monthly_revenue", 0)
                     finance._financial_records = data.get("financial_records", [])
                     finance._monthly_expenses = data.get("monthly_expenses", {})
                     finance._financial_goals = data.get("financial_goals", {})
-                elif isinstance(data, list):  # Se o JSON for uma lista
+                elif isinstance(data, list):  
                     for item in data:
                         finance._annual_revenue = item.get("annual_revenue", 0)
                         finance._monthly_revenue = item.get("monthly_revenue", 0)

@@ -3,10 +3,10 @@ import json
 import uuid
 from datetime import datetime
 
-# Classe base para eventos (agora abstrata)
+# Classe base para eventos (abstrata)
 class Event(ABC):
     def __init__(self, type, date, time, location):
-        self.id = self.generate_id()  # Gera um ID único para cada evento
+        self.id = self.generate_id() 
         self.type = type.capitalize()
         self.date = date
         self.time = time

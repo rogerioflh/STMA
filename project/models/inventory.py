@@ -2,10 +2,10 @@ import uuid
 import json
 
 class Inventory:
-    _inventory = {}  # Atributo de classe encapsulado
+    _inventory = {}  
 
     def __init__(self, type_object, sector, team, registration_year, last_use_date):
-        self._id = str(uuid.uuid4())[:8]  # Atributo encapsulado
+        self._id = str(uuid.uuid4())[:8]  
         self._type_object = type_object
         self._sector = sector
         self._team = team
@@ -123,7 +123,7 @@ class Inventory:
             f" Status: {'Disponível' if self._available else 'Indisponível'}"
         )
 
-    # Método para buscar equipamento por ID
+    # buscar equipamento por ID
     @classmethod
     def get_equipment_by_id(cls, equipment_id):
         return cls._inventory.get(equipment_id)

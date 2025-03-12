@@ -2,16 +2,16 @@ import json
 from models.player import Player
 
 class Performance:
-    performance_data = {}  # Dicionário para armazenar desempenhos
+    performance_data = {}  
 
     def __init__(self, player, passes, goals, assists, defenses, meters):
-        self.player = player  # Referência ao jogador
+        self.player = player  
         self.passes = passes
         self.goals = goals
         self.assists = assists
         self.defenses = defenses
         self.meters = meters
-        Performance.performance_data[player.name] = self  # Armazena o desempenho no dicionário
+        Performance.performance_data[player.name] = self  
 
     def update_info(self, passes=None, goals=None, assists=None, defenses=None, meters=None):
         if passes is not None:
@@ -28,7 +28,7 @@ class Performance:
 
     def to_dict(self):
         return {
-            "player_name": self.player.name,  # Acessa o nome do jogador através do atributo player
+            "player_name": self.player.name,  
             "passes": self.passes,
             "goals": self.goals,
             "assists": self.assists,
@@ -71,6 +71,4 @@ class Performance:
             f"Defesas: {self.defenses}\n"
             f"Metros percorridos: {self.meters}\n"
         )
-        # classes e métodos abstratos
-        # encapsulamento e polimorfismo
-        # herança
+        
