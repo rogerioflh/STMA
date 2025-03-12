@@ -1,8 +1,10 @@
+from abc import ABC, abstractmethod
 import json
 import uuid
 from datetime import datetime
-# Classe base para eventos
-class Event:
+
+# Classe base para eventos (agora abstrata)
+class Event(ABC):
     def __init__(self, type, date, time, location):
         self.id = self.generate_id()  # Gera um ID único para cada evento
         self.type = type.capitalize()
@@ -12,7 +14,7 @@ class Event:
     
     @staticmethod
     def generate_id():
-        return str(uuid.uuid4())  # Gera um UUID versão 4 como string
+        return str(uuid.uuid4()) 
         
     def update_event_details(self, type=None, date=None, time=None, location=None):
         if type:
@@ -30,10 +32,9 @@ class Event:
             return "O evento já ocorreu." if datetime_evento < datetime.now() else "O evento ainda não ocorreu."
         except ValueError:
             return "Formato de data ou hora inválido."
-        
-    
 
     def to_dict(self):
+        """Retorna um dicionário com os atributos comuns a todos os eventos."""
         return {
             "id": self.id,
             "type": self.type,
@@ -43,9 +44,11 @@ class Event:
         }
 
     def __str__(self):
+        """Retorna uma representação em string dos atributos comuns a todos os eventos."""
         return (
             f"ID: {self.id}\n"
-            f" Tipo: {self.type}\n"
-            f" Local: {self.location}\n"
-            f" Data: {self.date} | Horário: {self.time}"
+            f"Tipo: {self.type}\n"
+            f"Data: {self.date}\n"
+            f"Hora: {self.time}\n"
+            f"Localização: {self.location}"
         )

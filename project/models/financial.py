@@ -1,104 +1,190 @@
 import json
-#Gerenciamento financeiro da equipe
-class Financial:
-    financial_records = []  
+from datetime import datetime
+import os
 
+class Financial:
     def __init__(self):
-        self.annual_revenue = 0  
-        self.monthly_revenue = 0  
-        self.monthly_expenses = {
-            "folha_pagamento": 0, 
+        self._annual_revenue = 0  
+        self._monthly_revenue = 0  
+        self._financial_records = []  
+        self._monthly_expenses = {
+            "folha_pagamento": 0,  
             "saude": 0,  
             "alimentacao": 0,  
             "manutencao": 0,  
-            "viagens": 0, 
+            "viagens": 0,  
         }
-        Financial.financial_records.append(self) 
-        Financial.save_to_json()
+        self._financial_goals = {}  # Metas financeiras
 
-    def set_annual_revenue(self, revenue):
-        self.annual_revenue = revenue
-        Financial.save_to_json()
+    # Propriedades para encapsulamento
+    @property
+    def annual_revenue(self):
+        return self._annual_revenue
 
-    def set_monthly_revenue(self, revenue):
-        self.monthly_revenue = revenue
-        Financial.save_to_json()
-
-    def add_monthly_expense(self, category, amount):
-        if category in self.monthly_expenses:
-            self.monthly_expenses[category] += amount
-            Financial.save_to_json()
+    @annual_revenue.setter
+    def annual_revenue(self, value):
+        if value >= 0:
+            self._annual_revenue = value
         else:
-            raise ValueError(f"Categoria '{category}' não existe.")
+            raise ValueError("O faturamento anual não pode ser negativo.")
 
-    def get_monthly_expenses(self):
-        return self.monthly_expenses
+    @property
+    def monthly_revenue(self):
+        return self._monthly_revenue
 
-    def get_total_monthly_expenses(self):
-        return sum(self.monthly_expenses.values())
+    @monthly_revenue.setter
+    def monthly_revenue(self, value):
+        if value >= 0:
+            self._monthly_revenue = value
+        else:
+            raise ValueError("O faturamento mensal não pode ser negativo.")
 
-    def get_financial_summary(self):
-        return {
-            "Faturamento Anual": self.annual_revenue,
-            "Faturamento Mensal": self.monthly_revenue,
-            "Gastos Mensais": self.monthly_expenses,
-            "Total de Gastos Mensais": self.get_total_monthly_expenses(),
-            "Saldo Mensal": self.monthly_revenue - self.get_total_monthly_expenses(),
-        }
+    @property
+    def financial_records(self):
+        return self._financial_records
 
-    def add_financial_record(self, description, amount, date):
+    @property
+    def monthly_expenses(self):
+        return self._monthly_expenses
+
+    @property
+    def financial_goals(self):
+        return self._financial_goals
+
+    def add_financial_record(self, record_type, category, amount, date):
+        """Adiciona um registro financeiro (gasto ou lucro)."""
+        if record_type.lower() not in ["gasto", "lucro"]:
+            raise ValueError("Tipo de registro inválido. Use 'gasto' ou 'lucro'.")
+        
         record = {
-            "description": description,
+            "type": record_type.lower(),
+            "category": category,
             "amount": amount,
             "date": date,
         }
-        Financial.financial_records.append(record)
+        self._financial_records.append(record)
+        self.save_to_json()
 
-    def get_financial_records(self):
-        return Financial.financial_records
+    def get_monthly_summary(self, month, year):
+        """Retorna um resumo financeiro mensal."""
+        monthly_records = [
+            record for record in self._financial_records
+            if datetime.strptime(record["date"], "%d/%m/%Y").month == month
+            and datetime.strptime(record["date"], "%d/%m/%Y").year == year
+        ]
+        total_expenses = sum(record["amount"] for record in monthly_records if record["type"] == "gasto")
+        total_revenue = sum(record["amount"] for record in monthly_records if record["type"] == "lucro")
+        return {
+            "total_expenses": total_expenses,
+            "total_revenue": total_revenue,
+            "balance": total_revenue - total_expenses,
+        }
 
-    @classmethod
-    def save_to_json(cls, filename="financial.json"):
+    def get_semester_summary(self, semester, year):
+        """Retorna um resumo financeiro semestral."""
+        start_month = (semester - 1) * 6 + 1
+        end_month = start_month + 5
+        semester_records = [
+            record for record in self._financial_records
+            if start_month <= datetime.strptime(record["date"], "%d/%m/%Y").month <= end_month
+            and datetime.strptime(record["date"], "%d/%m/%Y").year == year
+        ]
+        total_expenses = sum(record["amount"] for record in semester_records if record["type"] == "gasto")
+        total_revenue = sum(record["amount"] for record in semester_records if record["type"] == "lucro")
+        return {
+            "total_expenses": total_expenses,
+            "total_revenue": total_revenue,
+            "balance": total_revenue - total_expenses,
+        }
+
+    def get_annual_summary(self, year):
+        """Retorna um resumo financeiro anual."""
+        annual_records = [
+            record for record in self._financial_records
+            if datetime.strptime(record["date"], "%d/%m/%Y").year == year
+        ]
+        total_expenses = sum(record["amount"] for record in annual_records if record["type"] == "gasto")
+        total_revenue = sum(record["amount"] for record in annual_records if record["type"] == "lucro")
+        return {
+            "total_expenses": total_expenses,
+            "total_revenue": total_revenue,
+            "balance": total_revenue - total_expenses,
+        }
+
+    def set_financial_goal(self, goal_type, target_amount):
+        """Define uma meta financeira."""
+        if goal_type.lower() not in ["gasto", "lucro"]:
+            raise ValueError("Tipo de meta inválido. Use 'gasto' ou 'lucro'.")
+        self._financial_goals[goal_type.lower()] = target_amount
+        self.save_to_json()
+
+    def check_goals(self):
+        """Verifica se as metas financeiras foram atingidas."""
+        results = {}
+        for goal_type, target_amount in self._financial_goals.items():
+            if goal_type == "gasto":
+                total = sum(record["amount"] for record in self._financial_records if record["type"] == "gasto")
+            else:
+                total = sum(record["amount"] for record in self._financial_records if record["type"] == "lucro")
+            results[goal_type] = {
+                "target": target_amount,
+                "actual": total,
+                "achieved": total >= target_amount if goal_type == "lucro" else total <= target_amount,
+            }
+        return results
+
+    def save_to_json(self, filename="financial.json"):
         """Salva os dados financeiros em um arquivo JSON."""
         with open(filename, "w") as file:
-            json.dump([finance.to_dict() for finance in cls.financial_records], file, indent=4)
-
+            json.dump(self.to_dict(), file, indent=4)
     @classmethod
     def load_from_json(cls, filename="financial.json"):
         """Carrega os dados financeiros de um arquivo JSON."""
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                cls.financial_records = []
-                for item in data:
-                    finance = Financial()
-                    finance.set_annual_revenue(item["annual_revenue"])
-                    finance.set_monthly_revenue(item["monthly_revenue"])
-                    for category, amount in item["monthly_expenses"].items():
-                        finance.add_monthly_expense(category, amount)
-                    cls.financial_records.append(finance)
+                finance = cls()  # Cria uma nova instância da classe Financial
+                if isinstance(data, dict):  # Se o JSON for um dicionário
+                    finance._annual_revenue = data.get("annual_revenue", 0)
+                    finance._monthly_revenue = data.get("monthly_revenue", 0)
+                    finance._financial_records = data.get("financial_records", [])
+                    finance._monthly_expenses = data.get("monthly_expenses", {})
+                    finance._financial_goals = data.get("financial_goals", {})
+                elif isinstance(data, list):  # Se o JSON for uma lista
+                    for item in data:
+                        finance._annual_revenue = item.get("annual_revenue", 0)
+                        finance._monthly_revenue = item.get("monthly_revenue", 0)
+                        finance._financial_records = item.get("financial_records", [])
+                        finance._monthly_expenses = item.get("monthly_expenses", {})
+                        finance._financial_goals = item.get("financial_goals", {})
+                return finance
         except FileNotFoundError:
             print(f"Arquivo {filename} não encontrado. Iniciando com lista vazia.")
+            return cls()  
+        except json.JSONDecodeError:
+            print(f"Erro: O arquivo {filename} contém JSON inválido. Iniciando com dados padrão.")
+            return cls()  
 
     def to_dict(self):
-        """Converte o objeto FinancialManager em um dicionário."""
+        """Converte o objeto Financial em um dicionário."""
         return {
-            "annual_revenue": self.annual_revenue,
-            "monthly_revenue": self.monthly_revenue,
-            "monthly_expenses": self.monthly_expenses
+            "annual_revenue": self._annual_revenue,
+            "monthly_revenue": self._monthly_revenue,
+            "financial_records": self._financial_records,
+            "monthly_expenses": self._monthly_expenses,
+            "financial_goals": self._financial_goals,
         }
+
     def __str__(self):
         summary = self.get_financial_summary()
         return (
-            f" Resumo Financeiro:\n"
-            f" Faturamento Anual: R${summary['Faturamento Anual']:.2f}\n"
-            f" Faturamento Mensal: R${summary['Faturamento Mensal']:.2f}\n"
-            f" Gastos Mensais:\n"
-            f"   - Folha de Pagamento: R${summary['Gastos Mensais']['folha_pagamento']:.2f}\n"
-            f"   - Saúde: R${summary['Gastos Mensais']['saude']:.2f}\n"
-            f"   - Alimentação: R${summary['Gastos Mensais']['alimentacao']:.2f}\n"
-            f"   - Manutenção: R${summary['Gastos Mensais']['manutencao']:.2f}\n"
-            f"   - Viagens: R${summary['Gastos Mensais']['viagens']:.2f}\n"
-            f" Total de Gastos Mensais: R${summary['Total de Gastos Mensais']:.2f}\n"
-            f" Saldo Mensal: R${summary['Saldo Mensal']:.2f}"
+            f"Resumo Financeiro:\n"
+            f"Faturamento Anual: R${self._annual_revenue:.2f}\n"
+            f"Faturamento Mensal: R${self._monthly_revenue:.2f}\n"
+            f"Gastos Mensais:\n"
+            f"  - Folha de Pagamento: R${self._monthly_expenses['folha_pagamento']:.2f}\n"
+            f"  - Saúde: R${self._monthly_expenses['saude']:.2f}\n"
+            f"  - Alimentação: R${self._monthly_expenses['alimentacao']:.2f}\n"
+            f"  - Manutenção: R${self._monthly_expenses['manutencao']:.2f}\n"
+            f"  - Viagens: R${self._monthly_expenses['viagens']:.2f}\n"
         )

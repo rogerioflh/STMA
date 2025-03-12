@@ -17,6 +17,7 @@ def load_data():
     Player.load_from_json()
     MatchScheduler.load_from_json()
     Financial.load_from_json()
+    financeiro = Financial()
     Inventory.load_from_json()
     TrainingManager.load_from_json()
     
@@ -186,26 +187,73 @@ def menu_jogadores():
             print("Opção inválida. Tente novamente.")
             
 def menu_financeiro():
-    financeiro = Financial()
+    financeiro = Financial.load_from_json()  # Cria uma instância ao carregar os dados
     while True:
-        print("\nGerenciamento de recursos financeiros: O que deseja fazer?\n")
-        print("1. Ver Faturamento")
-        print("2. Atualizar Gastos")
-        print("3. Ver Resumo Financeiro")
-        print("4. Voltar ao Menu Principal")
+        print("\n Gerenciamento financeiro da equipe: o que deseja fazer?\n")
+        print("1. Cadastrar Gasto ou Lucro")
+        print("2. Ver Relatórios")
+        print("3. Definir Metas Financeiras")
+        print("4. Verificar Metas")
+        print("0. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
-            print(f"Faturamento Anual: R${financeiro.annual_revenue:.2f}")
-            print(f"Faturamento Mensal: R${financeiro.monthly_revenue:.2f}")
+            record_type = input("Tipo (gasto/lucro): ")
+            category = input("Categoria: ")
+            amount = float(input("Valor: "))
+            date = input("Data (dd/mm/aaaa): ")
+            financeiro.add_financial_record(record_type, category, amount, date)
+            print("Registro adicionado com sucesso!")
+
         elif escolha == "2":
-            categoria = input("Categoria (folha_pagamento, saude, alimentacao, manutencao, viagens): ")
-            valor = float(input("Valor: "))
-            financeiro.add_monthly_expense(categoria, valor)
-            print("Gasto atualizado!")
+            print("\n--- Relatórios ---")
+            print("1. Mensal")
+            print("2. Semestral")
+            print("3. Anual")
+            report_choice = input("Escolha uma opção: ")
+
+            if report_choice == "1":
+                month = int(input("Mês (1-12): "))
+                year = int(input("Ano: "))
+                summary = financeiro.get_monthly_summary(month, year)
+                print(f"\nResumo Mensal ({month}/{year}):")
+                print(f"Total de Gastos: R${summary['total_expenses']:.2f}")
+                print(f"Total de Lucros: R${summary['total_revenue']:.2f}")
+                print(f"Saldo: R${summary['balance']:.2f}")
+
+            elif report_choice == "2":
+                semester = int(input("Semestre (1 ou 2): "))
+                year = int(input("Ano: "))
+                summary = financeiro.get_semester_summary(semester, year)
+                print(f"\nResumo Semestral (Semestre {semester}/{year}):")
+                print(f"Total de Gastos: R${summary['total_expenses']:.2f}")
+                print(f"Total de Lucros: R${summary['total_revenue']:.2f}")
+                print(f"Saldo: R${summary['balance']:.2f}")
+
+            elif report_choice == "3":
+                year = int(input("Ano: "))
+                summary = financeiro.get_annual_summary(year)
+                print(f"\nResumo Anual ({year}):")
+                print(f"Total de Gastos: R${summary['total_expenses']:.2f}")
+                print(f"Total de Lucros: R${summary['total_revenue']:.2f}")
+                print(f"Saldo: R${summary['balance']:.2f}")
+
         elif escolha == "3":
-            print(financeiro)
+            goal_type = input("Tipo de meta (gasto/lucro): ")
+            target_amount = float(input("Valor da meta: "))
+            financeiro.set_financial_goal(goal_type, target_amount)
+            print("Meta definida com sucesso!")
+
         elif escolha == "4":
+            results = financeiro.check_goals()
+            for goal_type, data in results.items():
+                print(f"\nMeta de {goal_type.capitalize()}:")
+                print(f"Meta: R${data['target']:.2f}")
+                print(f"Realizado: R${data['actual']:.2f}")
+                print(f"Atingida: {'Sim' if data['achieved'] else 'Não'}")
+
+        elif escolha == "0":
+            financeiro.save_to_json()  # Correto: chama o método na instância
             break
         else:
             print("Opção inválida. Tente novamente.")
@@ -271,21 +319,16 @@ def menu_treinamentos():
                     break
             else:
                 print("Treino não encontrado")
-                
         elif escolha == "4":
             id_evento = input("Digite o ID do treino que deseja consultar: ")
             found = False
             for treinamento in TrainingManager.training_sessions:
                 if treinamento.id == id_evento:
-                        print(treinamento.check_status())
-                else:
-                    print("Formato de data ou hora armazenado é inválido. Verifique os dados.")
+                    print(treinamento.check_status())  # Exibe o status do evento
                     found = True
                     break
             if not found:
                 print("Treino não encontrado.")
-
-                
         elif escolha == "5":
             id_evento = input("Digite o ID do treino que deseja atualizar: ")
             for treinamento in TrainingManager.training_sessions:
@@ -293,20 +336,24 @@ def menu_treinamentos():
                     atualizar_detalhes_evento(treinamento)
                     break
             else:
-                print("Treino não encontrado.")   
-                
+                print("Treino não encontrado.")
         elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
 
 def menu_equipamentos():
+    Inventory.load_from_json()  # Carrega os dados do JSON ao iniciar o menu
     while True:
         print("\n  Gerenciamento de equipamentos do time\n")
-        print("1. Adicionar um novo equipamento no estoque")
+        print("1. Adicionar um novo equipamento ao estoque")
         print("2. Ver equipamentos armazenados")
         print("3. Alterar disponibilidade de um equipamento")
-        print("4. Voltar ao menu principal")
+        print("4. Editar informações de um equipamento")
+        print("5. Remover um equipamento")
+        print("6. Buscar equipamento por ID")
+        print("7. Filtrar equipamentos por disponibilidade")
+        print("0. Voltar ao menu principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -317,28 +364,87 @@ def menu_equipamentos():
             ultimo_uso = input("Data do último uso (dd/mm/aaaa): ")
             Inventory(tipo, setor, equipe, ano, ultimo_uso)
             print("Equipamento adicionado!")
+
         elif escolha == "2":
-            for equipamento in Inventory.inventory.values():
+            for equipamento in Inventory._inventory.values():
                 print(equipamento)
+
         elif escolha == "3":
             id_equipamento = input("ID do equipamento: ")
-            if id_equipamento in Inventory.inventory:
-                Inventory.inventory[id_equipamento].toggle_availability()
+            equipamento = Inventory.get_equipment_by_id(id_equipamento)
+            if equipamento:
+                equipamento.toggle_availability()
                 print("Disponibilidade alterada!")
             else:
                 print("Equipamento não encontrado.")
+
         elif escolha == "4":
+            id_equipamento = input("ID do equipamento: ")
+            equipamento = Inventory.get_equipment_by_id(id_equipamento)
+            if equipamento:
+                print("Deixe em branco para manter o valor atual.")
+                tipo = input(f"Novo tipo ({equipamento.type_object}): ") or equipamento.type_object
+                setor = input(f"Novo setor ({equipamento.sector}): ") or equipamento.sector
+                equipe = input(f"Nova equipe ({equipamento.team}): ") or equipamento.team
+                ano = input(f"Novo ano de registro ({equipamento.registration_year}): ") or equipamento.registration_year
+                ultimo_uso = input(f"Nova data do último uso ({equipamento.last_use_date}): ") or equipamento.last_use_date
+                equipamento.type_object = tipo
+                equipamento.sector = setor
+                equipamento.team = equipe
+                equipamento.registration_year = ano
+                equipamento.last_use_date = ultimo_uso
+                print("Equipamento atualizado!")
+            else:
+                print("Equipamento não encontrado.")
+
+        elif escolha == "5":
+            id_equipamento = input("ID do equipamento: ")
+            if id_equipamento in Inventory._inventory:
+                del Inventory._inventory[id_equipamento]
+                Inventory.save_to_json()
+                print("Equipamento removido!")
+            else:
+                print("Equipamento não encontrado.")
+
+        elif escolha == "6":
+            id_equipamento = input("ID do equipamento: ")
+            equipamento = Inventory.get_equipment_by_id(id_equipamento)
+            if equipamento:
+                print(equipamento)
+            else:
+                print("Equipamento não encontrado.")
+
+        elif escolha == "7":
+            disponibilidade = input("Filtrar por disponibilidade (1 - Disponível, 2 - Indisponível): ")
+            if disponibilidade == "1":
+                for equipamento in Inventory._inventory.values():
+                    if equipamento.available:
+                        print(equipamento)
+            elif disponibilidade == "2":
+                for equipamento in Inventory._inventory.values():
+                    if not equipamento.available:
+                        print(equipamento)
+            else:
+                print("Opção inválida.")
+
+        elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
 
 def menu_recrutamento():
+    RecruitmentManager.load_from_json()  
     while True:
         print("\n Setor de análise de possíveis contratações")
         print("1. Adicionar novo atleta em monitoramento")
         print("2. Ver atletas em monitoramento")
         print("3. Avaliar atleta em monitoramento")
-        print("4. Voltar ao menu principal")
+        print("4. Editar informações de um atleta")
+        print("5. Remover um atleta")
+        print("6. Buscar atleta por nome")
+        print("7. Filtrar atletas por posição")
+        print("8. Adicionar/Atualizar estatísticas de um atleta")
+        print("0. Voltar ao menu principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -347,30 +453,88 @@ def menu_recrutamento():
             idade = int(input("Idade: "))
             RecruitmentManager(nome, posicao, idade)
             print("Atleta adicionado a lista de monitoramento!")
+
         elif escolha == "2":
-            for prospecto in RecruitmentManager.prospects_list:
+            for prospecto in RecruitmentManager._prospects_list:
                 print(prospecto)
+
         elif escolha == "3":
             nome = input("Nome do atleta: ")
-            for prospecto in RecruitmentManager.prospects_list:
-                if prospecto.name == nome:
-                    avaliacao = input("Avaliação: ")
-                    prospecto.evaluate_prospect(avaliacao)
-                    print("atleta avaliado!")
-                    break
+            prospecto = RecruitmentManager.get_prospect_by_name(nome)
+            if prospecto:
+                avaliacao = input("Avaliação: ")
+                prospecto.evaluate_prospect(avaliacao)
+                print("Atleta avaliado!")
             else:
-                print("atleta não encontrado.")
+                print("Atleta não encontrado.")
+
         elif escolha == "4":
+            nome = input("Nome do atleta: ")
+            prospecto = RecruitmentManager.get_prospect_by_name(nome)
+            if prospecto:
+                print("Deixe em branco para manter o valor atual.")
+                novo_nome = input(f"Novo nome ({prospecto.name}): ") or prospecto.name
+                nova_posicao = input(f"Nova posição ({prospecto.position}): ") or prospecto.position
+                nova_idade = input(f"Nova idade ({prospecto.age}): ") or prospecto.age
+                prospecto.name = novo_nome
+                prospecto.position = nova_posicao
+                prospecto.age = nova_idade
+                print("Informações do atleta atualizadas!")
+            else:
+                print("Atleta não encontrado.")
+
+        elif escolha == "5":
+            nome = input("Nome do atleta: ")
+            prospecto = RecruitmentManager.get_prospect_by_name(nome)
+            if prospecto:
+                RecruitmentManager._prospects_list.remove(prospecto)
+                RecruitmentManager.save_to_json()
+                print("Atleta removido da lista de monitoramento!")
+            else:
+                print("Atleta não encontrado.")
+
+        elif escolha == "6":
+            nome = input("Nome do atleta: ")
+            prospecto = RecruitmentManager.get_prospect_by_name(nome)
+            if prospecto:
+                print(prospecto)
+            else:
+                print("Atleta não encontrado.")
+
+        elif escolha == "7":
+            posicao = input("Posição para filtrar: ")
+            for prospecto in RecruitmentManager._prospects_list:
+                if prospecto.position == posicao:
+                    print(prospecto)
+
+        elif escolha == "8":
+            nome = input("Nome do atleta: ")
+            prospecto = RecruitmentManager.get_prospect_by_name(nome)
+            if prospecto:
+                chave = input("Nome da estatística (ex: gols, assistências): ")
+                valor = input(f"Valor para {chave}: ")
+                prospecto.stats[chave] = valor
+                print(f"Estatística '{chave}' atualizada para '{valor}'!")
+            else:
+                print("Atleta não encontrado.")
+
+        elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
 
+import json
+
 def menu_midia():
+    MediaManager.load_from_json()  # Carrega os dados do JSON ao iniciar o menu
     while True:
         print("\n Gerenciamento de mídias da equipe!\n")
         print("1. Adicionar Press Release")
         print("2. Ver Press Releases")
-        print("3. Voltar ao Menu Principal")
+        print("3. Editar Press Release")
+        print("4. Remover Press Release")
+        print("5. Buscar Press Release por Título")
+        print("6. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -378,11 +542,43 @@ def menu_midia():
             conteudo = input("Conteúdo: ")
             data = input("Data (dd/mm/aaaa): ")
             MediaManager(titulo, conteudo, data)
+            MediaManager.save_to_json()
             print("Press Release adicionado!")
+
         elif escolha == "2":
-            for release in MediaManager.press_releases:
-                print(release)
+            MediaManager.list_releases()
+
         elif escolha == "3":
+            titulo = input("Título do Press Release a ser editado: ")
+            release = MediaManager.get_release_by_title(titulo)
+            if release:
+                print("Deixe em branco para manter o valor atual.")
+                novoTitulo = input(f"Novo título ({release.title}): ") or release.title
+                novoConteudo = input(f"Novo conteúdo ({release.content}): ") or release.content
+                novaData = input(f"Nova data ({release.date}): ") or release.date
+                release.title = novoTitulo
+                release.content = novoConteudo
+                release.date = novaData
+                MediaManager.save_to_json()
+                print("Press Release atualizado!")
+            else:
+                print("Press Release não encontrado.")
+
+        elif escolha == "4":
+            titulo = input("Título do Press Release a ser removido: ")
+            MediaManager.remove_release(titulo)
+            MediaManager.save_to_json()
+
+        elif escolha == "5":
+            titulo = input("Título do Press Release: ")
+            release = MediaManager.get_release_by_title(titulo)
+            if release:
+                print(release)
+            else:
+                print("Press Release não encontrado.")
+
+        elif escolha == "6":
+            MediaManager.save_to_json()
             break
         else:
             print("Opção inválida. Tente novamente.")
@@ -462,14 +658,25 @@ def menu_eventos():
             break
         else:
             print("Opção inválida. Tente novamente.")          
-import atexit
+def load_data():
+    try:
+        Player.load_from_json()
+        MatchScheduler.load_from_json()
+        Financial.load_from_json()
+        Inventory.load_from_json()
+        TrainingManager.load_from_json()
+    except Exception as e:
+        print(f"Erro ao carregar dados: {e}")
 
 def save_data():
-    Player.save_to_json()
-    MatchScheduler.save_to_json()
-    Financial.save_to_json()
-    Inventory.save_to_json()
-    TrainingManager.save_to_json()
+    try:
+        Player.save_to_json()
+        MatchScheduler.save_to_json()
+       # Financial.save_to_json()
+        Inventory.save_to_json()
+        TrainingManager.save_to_json()
+    except Exception as e:
+        print(f"Erro ao salvar dados: {e}")
 
 atexit.register(save_data)
 

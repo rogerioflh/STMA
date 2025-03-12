@@ -1,16 +1,13 @@
-from datetime import datetime
 import json
 from models.event import Event
 
-# Agendar participação em partidas ou torneios
-# Classe para agendar partidas ou torneios
 class MatchScheduler(Event):
     competitions_list = []
 
     def __init__(self, type, location, date, time, opponent):
         super().__init__(type, date, time, location)
         self.opponent = opponent
-        self.status = False  
+        self.status = False
         MatchScheduler.competitions_list.append(self)
         MatchScheduler.save_to_json()
 
@@ -46,7 +43,7 @@ class MatchScheduler(Event):
                         item["time"],
                         item["opponent"]
                     )
-                    match.status = item.get("status", False)  # Carrega o status, se existir
+                    match.status = item.get("status", False)
                     cls.competitions_list.append(match)
         except FileNotFoundError:
             print(f"Arquivo {filename} não encontrado. Iniciando com lista vazia.")
