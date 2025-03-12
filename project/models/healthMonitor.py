@@ -1,17 +1,16 @@
 import json
 from models.player import Player
-# Monitoramento de saúde dos atletas e lesões
-class HealthMonitor(Player):
-    health_records = {}  # Dicionário para armazenar os registros de saúde
+
+class HealthMonitor:
+    health_records = {}  # Dicionário para armazenar registros de saúde
 
     def __init__(self, player, injury_report):
-        self.player = player  # Referência a um objeto Player
+        self.player = player  # Referência ao jogador
         self.injury_report = injury_report
-        HealthMonitor.health_records[player.name] = self
-        HealthMonitor.save_to_json()
+        HealthMonitor.health_records[player.name] = self  # Armazena o registro no dicionário
 
-    def update_injury_report(self, new_report):
-        self.injury_report = new_report
+    def update_info(self, injury_report):
+        self.injury_report = injury_report
         HealthMonitor.save_to_json()
 
     def get_health_status(self):
@@ -19,7 +18,7 @@ class HealthMonitor(Player):
 
     def to_dict(self):
         return {
-            "player_name": self.player.name,
+            "player_name": self.player.name,  # Acessa o nome do jogador através do atributo player
             "injury_report": self.injury_report
         }
 
@@ -35,7 +34,6 @@ class HealthMonitor(Player):
                 data = json.load(file)
                 cls.health_records = {}
                 for item in data:
-                    # Busca o jogador correspondente na lista de jogadores
                     player = next((p for p in Player.players_list if p.name == item["player_name"]), None)
                     if player:
                         health_record = HealthMonitor(player, item["injury_report"])

@@ -10,7 +10,7 @@ class MatchScheduler(Event):
     def __init__(self, type, location, date, time, opponent):
         super().__init__(type, date, time, location)
         self.opponent = opponent
-        self.status = False  # Status inicial: não concluído
+        self.status = False  
         MatchScheduler.competitions_list.append(self)
         MatchScheduler.save_to_json()
 

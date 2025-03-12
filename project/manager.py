@@ -22,16 +22,13 @@ def load_data():
     
 def menu_principal():
     while True:
-        print("\n--- Menu Principal ---")
+        print("\n Bem vindo ao sistema de gerenciamento da sua equipe! Escolha como deseja proseguir: \n")
         print("1. Gerenciamento de Jogadores")
         print("2. Gerenciamento Financeiro")
-        print("3. Gerenciamento de Treinamentos")
-        print("4. Monitoramento de Saúde")
-        print("5. Gerenciamento de Equipamentos")
-        print("6. Recrutamento de Jogadores")
-        print("7. Gerenciamento de Mídia")
-        print("8. Gerenciamneto de Partidas")
-        print("9. Gerenciamento de Desempenho")
+        print("3. Gerenciamento de Compromissos")
+        print("4. Gerenciamento de Equipamentos")
+        print("5. Recrutamento de Jogadores")
+        print("6. Gerenciamento de Mídia")
         print("0. Sair")
         escolha = input("Escolha uma opção: ")
 
@@ -42,38 +39,30 @@ def menu_principal():
             menu_financeiro()
             
         elif escolha == "3":
-            menu_treinamentos()
-            
+            menu_eventos()
+              
         elif escolha == "4":
-            menu_saude()
-            
-        elif escolha == "5":
             menu_equipamentos()
             
-        elif escolha == "6":
+        elif escolha == "5":
             menu_recrutamento()
             
-        elif escolha == "7":
+        elif escolha == "6":
             menu_midia()
-            
-        elif escolha == "8":
-            menu_partidas()
-            
-        elif escolha == "9":
-            menu_desempenho()
             
         elif escolha == "0":
             print("Saindo...")
             break
         else:
             print("Opção inválida. Tente novamente.")
-
+            
 def menu_jogadores():
     while True:
-        print("\n--- Gerenciamento de Jogadores ---")
+        print("\n Organização de atletas: \n")
         print("1. Adicionar Jogador")
-        print("2. Ver Jogadores")
-        print("3. Voltar ao Menu Principal")
+        print("2. Ver informações sobre jogadores")
+        print("3. Atualizar informações sobre um jogador")
+        print("0. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -82,23 +71,124 @@ def menu_jogadores():
             altura = float(input("Altura (em metros): "))
             peso = float(input("Peso (em kg): "))
             posicao = input("Posição: ")
-            Player(nome, idade, altura, peso, posicao)
+            passes = int(input("Passes: "))
+            gols = int(input("Gols: "))
+            assistencias = int(input("Assistências: "))
+            defesas = int(input("Defesas: "))
+            metros = int(input("Metros percorridos: "))
+            lesao = input("Relatório de saúde: ")
+
+            # Cria o jogador
+            player = Player(nome, idade, altura, peso, posicao)
+
+            # Cria o desempenho e o registro de saúde associados ao jogador
+            performance = Performance(player, passes, gols, assistencias, defesas, metros)
+            health = HealthMonitor(player, lesao)
+
             print("Jogador adicionado com sucesso!")
+
         elif escolha == "2":
-            if not Player.players_list:
-                print("Nenhum jogador cadastrado.")
-            else:
-                for jogador in Player.players_list:
-                    print(jogador)
+            while True:
+                print("Escolha qual ação deseja realizar:")
+                print("1. Ver Jogadores da equipe")
+                print("2. Ver status de saúde de um atleta")
+                print("3. Ver desempenho de um atleta")
+                print("0. Voltar ao menu principal")
+                escolha = input("Escolha uma opção: ")
+
+                if escolha == "1":
+                    if not Player.players_list:
+                        print("Nenhum jogador cadastrado.")
+                    else:
+                        for jogador in Player.players_list:
+                            print(jogador)
+
+                elif escolha == "2":
+                    nome = input("Nome do jogador: ")
+                    if nome in HealthMonitor.health_records:
+                        print(f"Status de saúde de {nome}: {HealthMonitor.health_records[nome].injury_report}")
+                    else:
+                        print("Nenhum registro de saúde encontrado.")
+
+                elif escolha == "3":
+                    nome = input("Nome do jogador: ")
+                    if nome in Performance.performance_data:
+                        print(f"Desempenho de {nome}:")
+                        print(f"Passes: {Performance.performance_data[nome].passes}")
+                        print(f"Gols: {Performance.performance_data[nome].goals}")
+                        print(f"Assistências: {Performance.performance_data[nome].assists}")
+                        print(f"Defesas: {Performance.performance_data[nome].defenses}")
+                        print(f"Metros percorridos: {Performance.performance_data[nome].meters}")
+                    else:
+                        print("Nenhum desempenho registrado.")
+
+                elif escolha == "0":
+                    break
+                else:
+                    print("Opção inválida. Tente novamente.")
+
         elif escolha == "3":
+            while True:
+                print("Escolha qual ação deseja realizar:")
+                print("1. Atualizar métricas de desempenho")
+                print("2. Atualizar relatório de saúde de um atleta")
+                print("0. Voltar ao menu principal")
+                escolha = input("Escolha uma opção: ")
+
+                if escolha == "1":
+                    nome = input("Nome do jogador: ")
+                    if nome in Performance.performance_data:
+                        print("Selecione qual métrica deseja atualizar: ")
+                        print("1. Passes")
+                        print("2. Gols")
+                        print("3. Assistências")
+                        print("4. Defesas")
+                        print("5. Metros percorridos")
+                        escolha = input("Escolha uma opção: ")
+
+                        if escolha == "1":
+                            passes = int(input("Novo valor para passes: "))
+                            Performance.performance_data[nome].update_info(passes=passes)
+                        elif escolha == "2":
+                            gols = int(input("Novo valor para gols: "))
+                            Performance.performance_data[nome].update_info(goals=gols)
+                        elif escolha == "3":
+                            assistencias = int(input("Novo valor para assistências: "))
+                            Performance.performance_data[nome].update_info(assists=assistencias)
+                        elif escolha == "4":
+                            defesas = int(input("Novo valor para defesas: "))
+                            Performance.performance_data[nome].update_info(defenses=defesas)
+                        elif escolha == "5":
+                            metros = int(input("Novo valor para metros percorridos: "))
+                            Performance.performance_data[nome].update_info(meters=metros)
+                        else:
+                            print("Opção inválida.")
+                    else:
+                        print("Jogador não encontrado.")
+
+                elif escolha == "2":
+                    nome = input("Nome do jogador: ")
+                    if nome in HealthMonitor.health_records:
+                        lesao = input("Novo relatório de lesão: ")
+                        HealthMonitor.health_records[nome].update_info(lesao)
+                        print("Relatório de saúde atualizado!")
+                    else:
+                        print("Jogador não encontrado.")
+
+                elif escolha == "0":
+                    break
+                else:
+                    print("Opção inválida. Tente novamente.")
+
+        elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
-
+            
 def menu_financeiro():
     financeiro = Financial()
     while True:
-        print("\n--- Gerenciamento Financeiro ---")
+        print("\nGerenciamento de recursos financeiros: O que deseja fazer?\n")
         print("1. Ver Faturamento")
         print("2. Atualizar Gastos")
         print("3. Ver Resumo Financeiro")
@@ -120,14 +210,45 @@ def menu_financeiro():
         else:
             print("Opção inválida. Tente novamente.")
 
+def atualizar_detalhes_evento(evento):
+    while True:
+        print("\n  Atualizar detalhes de um compromisso")
+        print("1. Tipo de Evento")
+        print("2. Data do Evento")
+        print("3. Hora do Evento")
+        print("4. Localização do Evento")
+        print("5. Voltar ao Menu Anterior")
+        escolha = input("Escolha uma opção para atualizar ou voltar: ")
+
+        if escolha == "1":
+            novo_tipo = input("Digite o novo tipo de evento: ")
+            evento.update_event_details(type=novo_tipo)
+        elif escolha == "2":
+            nova_data = input("Digite a nova data do evento (dd/mm/aaaa): ")
+            evento.update_event_details(date=nova_data)
+        elif escolha == "3":
+            nova_hora = input("Digite a nova hora do evento (hh:mm): ")
+            evento.update_event_details(time=nova_hora)
+        elif escolha == "4":
+            nova_localizacao = input("Digite a nova localização do evento: ")
+            evento.update_event_details(location=nova_localizacao)
+        elif escolha == "5":
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+        print("Detalhes atualizados com sucesso:")
+        print(evento)
+        
 def menu_treinamentos():
     while True:
-        print("\n--- Gerenciamento de Treinamentos ---")
-        print("1. Agendar Treinamento")
-        print("2. Ver Treinamentos")
-        print("3. Marcar Treinamento como Concluído")
-        print("4. Verificar Status do Treinamento")
-        print("0. Voltar ao Menu Principal")
+        print("\n Administração de treinos.\n")
+        print("1. Agendar treino")
+        print("2. Ver treino")
+        print("3. Marcar conclusão de treino")
+        print("4. Verificar status de um treino")
+        print("5. Atualizar detalhes de um treino")
+        print("0. Voltar ao menu principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -138,70 +259,54 @@ def menu_treinamentos():
             local = input("Local: ")
             profissional = input("Profissional responsável: ")
             TrainingManager(tipo, data, hora, duracao, local, profissional)
-            print("Treinamento agendado!")
+            print("Treino agendado!")
         elif escolha == "2":
             for treinamento in TrainingManager.training_sessions:
                 print(treinamento)
         elif escolha == "3":
-            tipo = input("Tipo de treinamento: ")
+            id_evento = input("Digite o ID do treino que deseja concluir: ")
             for treinamento in TrainingManager.training_sessions:
-                if treinamento.type == tipo:
+                if treinamento.id == id_evento:
                     print(treinamento.mark_completed())
                     break
             else:
-                print("Treinamento não encontrado.")
+                print("Treino não encontrado")
+                
         elif escolha == "4":
-            tipo = input("Tipo de treinamento: ")
+            id_evento = input("Digite o ID do treino que deseja consultar: ")
+            found = False
             for treinamento in TrainingManager.training_sessions:
-                if treinamento.type == tipo:
-                    print(treinamento.check_status())
+                if treinamento.id == id_evento:
+                        print(treinamento.check_status())
+                else:
+                    print("Formato de data ou hora armazenado é inválido. Verifique os dados.")
+                    found = True
+                    break
+            if not found:
+                print("Treino não encontrado.")
+
+                
+        elif escolha == "5":
+            id_evento = input("Digite o ID do treino que deseja atualizar: ")
+            for treinamento in TrainingManager.training_sessions:
+                if treinamento.id == id_evento:
+                    atualizar_detalhes_evento(treinamento)
                     break
             else:
-                print("Treinamento não encontrado.")
+                print("Treino não encontrado.")   
+                
         elif escolha == "0":
-            break
-        else:
-            print("Opção inválida. Tente novamente.")
-
-def menu_saude():
-    while True:
-        print("\n--- Monitoramento de Saúde ---")
-        print("1. Registrar Lesão")
-        print("2. Ver Status de Saúde")
-        print("3. Voltar ao Menu Principal")
-        escolha = input("Escolha uma opção: ")
-
-        if escolha == "1":
-            nome = input("Nome do jogador: ")
-            jogador_encontrado = None
-            for jogador in Player.players_list:
-                if jogador.name == nome:
-                    jogador_encontrado = jogador
-                    break
-            if jogador_encontrado:
-                lesao = input("Relatório da lesão: ")
-                HealthMonitor(jogador_encontrado, lesao)
-                print("Lesão registrada com sucesso!")
-            else:
-                print("Jogador não encontrado.")
-        elif escolha == "2":
-            nome = input("Nome do jogador: ")
-            if nome in HealthMonitor.health_records:
-                print(HealthMonitor.health_records[nome])
-            else:
-                print("Nenhum registro de saúde encontrado.")
-        elif escolha == "3":
             break
         else:
             print("Opção inválida. Tente novamente.")
 
 def menu_equipamentos():
     while True:
-        print("\n--- Gerenciamento de Equipamentos ---")
-        print("1. Adicionar Equipamento")
-        print("2. Ver Equipamentos")
-        print("3. Alterar Disponibilidade")
-        print("4. Voltar ao Menu Principal")
+        print("\n  Gerenciamento de equipamentos do time\n")
+        print("1. Adicionar um novo equipamento no estoque")
+        print("2. Ver equipamentos armazenados")
+        print("3. Alterar disponibilidade de um equipamento")
+        print("4. Voltar ao menu principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
@@ -229,19 +334,19 @@ def menu_equipamentos():
 
 def menu_recrutamento():
     while True:
-        print("\n--- Recrutamento de Jogadores ---")
-        print("1. Adicionar Prospecto")
-        print("2. Ver Prospectos")
-        print("3. Avaliar Prospecto")
-        print("4. Voltar ao Menu Principal")
+        print("\n Setor de análise de possíveis contratações")
+        print("1. Adicionar novo atleta em monitoramento")
+        print("2. Ver atletas em monitoramento")
+        print("3. Avaliar atleta em monitoramento")
+        print("4. Voltar ao menu principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
-            nome = input("Nome do prospecto: ")
+            nome = input("Nome do atleta a ser monitorado: ")
             posicao = input("Posição: ")
             idade = int(input("Idade: "))
             RecruitmentManager(nome, posicao, idade)
-            print("Prospecto adicionado!")
+            print("Atleta adicionado a lista de monitoramento!")
         elif escolha == "2":
             for prospecto in RecruitmentManager.prospects_list:
                 print(prospecto)
@@ -262,7 +367,7 @@ def menu_recrutamento():
 
 def menu_midia():
     while True:
-        print("\n--- Gerenciamento de Mídia ---")
+        print("\n Gerenciamento de mídias da equipe!\n")
         print("1. Adicionar Press Release")
         print("2. Ver Press Releases")
         print("3. Voltar ao Menu Principal")
@@ -284,11 +389,12 @@ def menu_midia():
             
 def menu_partidas():
     while True:
-        print("\n--- Agendamento de Partidas ---")
-        print("1. Agendar Partida")
-        print("2. Ver Partidas Agendadas")
-        print("3. Verificar Status da Partida")
+        print("\n Agendamento de partidas.\n")
+        print("1. Agendar partida")
+        print("2. Ver partidas agendadas")
+        print("3. Verificar Status de uma partida")
         print("4. Marcar partida como concluída")
+        print ("5. Atualizar informações de uma partida")
         print("0. Voltar ao Menu Principal")
         escolha = input("Escolha uma opção: ")
 
@@ -303,96 +409,59 @@ def menu_partidas():
         elif escolha == "2":
             for partida in MatchScheduler.competitions_list:
                 print(partida)
+
+            else:
+                print("Partida não encontrada.")
+                
+                
         elif escolha == "3":
-            tipo = input("Tipo da partida: ")
+            id_evento = input("Digite o ID da partida que deseja consultar: ")
             for partida in MatchScheduler.competitions_list:
-                if partida.type == tipo:
+                 if partida.id == id_evento:
                     print(partida.check_status())
                     break
             else:
                 print("Partida não encontrada.")
                 
         elif escolha == "4":
-            tipo = input("Tipo da partida: ")
+            id_evento = input("Digite o ID da partida que deseja concluir: ")
             for partida in MatchScheduler.competitions_list:
-                if partida.type == tipo:
+                if partida.id == id_evento:
                     print(partida.mark_as_completed())
                     break
             else:
                 print("Partida não encontrada.")
+                
+        elif escolha == "5":
+            id_evento = input("Digite o ID da partida que deseja atualizar: ")
+            for partida in MatchScheduler.competitions_list:
+                if partida.id == id_evento:
+                    atualizar_detalhes_evento(partida)
+                    break
+            else:
+                print("Treino não encontrado.")        
+                
         elif escolha == "0":
             break
         else:
             print("Opção inválida. Tente novamente.")
             
-def menu_desempenho():
+def menu_eventos():
     while True:
-        print("\n--- Acompanhamento de Desempenho ---")
-        print("1. Adicionar Desempenho")
-        print("2. Atualizar Desempenho")
-        print("3. Ver Desempenho de um Jogador")
-        print("4. Voltar ao Menu Principal")
+        print("\n Gerenciamento de compromissos da equipe\n")
+        print("1. Gerenciamento de treinos")
+        print("2. Agendamento de partidas")
+        print("0. Voltar ao penu principal")
         escolha = input("Escolha uma opção: ")
 
         if escolha == "1":
-            nome = input("Nome do jogador: ")
-            jogador_encontrado = None
-            for jogador in Player.players_list:
-                if jogador.name == nome:
-                    jogador_encontrado = jogador
-                    break
-            if jogador_encontrado:
-                passes = int(input("Passes: "))
-                gols = int(input("Gols: "))
-                assistencias = int(input("Assistências: "))
-                defesas = int(input("Defesas: "))
-                metros = int(input("Metros percorridos: "))
-
-                Performance(jogador_encontrado, passes, gols, assistencias, metros)
-                print("Desempenho registrado!")
-            else:
-                print("Jogador não encontrado.")
+            menu_treinamentos()
         elif escolha == "2":
-            nome = input("Nome do jogador: ")
-            if nome in Performance.performance_data:
-                print("Selecione qual métrica deseja atualizar: ")
-                print("1. Passes")
-                print("2. Gols")
-                print("3. Assistências")
-                print("4. Defesas")
-                print("5. Metros percorridos")
-                escolha = input("Escolha uma opção: ")
-                
-                if escolha == "1":
-                    passes = int(input("Novo valor para passes: "))
-                    Performance.performance_data[nome].update_performance(passes=passes)
-                elif escolha == "2":
-                    gols = int(input("Novo valor para gols: "))
-                    Performance.performance_data[nome].update_performance(goals=gols)
-                elif escolha == "3":
-                    assistencias = int(input("Novo valor para assistências: "))
-                    Performance.performance_data[nome].update_performance(assists=assistencias)
-                elif escolha == "4":
-                    defesas = int(input("Novo valor para defesas: "))
-                    Performance.performance_data[nome].update_performance(defenses=defesas)
-                elif escolha == "5":
-                    metros = int(input("Novo valor para metros percorridos: "))
-                    Performance.performance_data[nome].update_performance(meters=metros)
-                else:
-                    print("Opção inválida.")
-            else:
-                print("Jogador não encontrado.")
-        elif escolha == "3":
-            nome = input("Nome do jogador: ")
-            if nome in Performance.performance_data:
-                print(Performance.performance_data[nome])
-            else:
-                print("Nenhum desempenho registrado.")
-        elif escolha == "4":
+            menu_partidas()
+        elif escolha == "0":
             break
         else:
-            print("Opção inválida. Tente novamente.")
-            
+            print("Opção inválida. Tente novamente.")          
 import atexit
 
 def save_data():

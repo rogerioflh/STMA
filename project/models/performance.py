@@ -1,19 +1,19 @@
 import json
 from models.player import Player
-class Performance(Player):
-    performance_data = {}  # Dicionário para armazenar o desempenho dos jogadores
+
+class Performance:
+    performance_data = {}  # Dicionário para armazenar desempenhos
 
     def __init__(self, player, passes, goals, assists, defenses, meters):
-        self.player = player
+        self.player = player  # Referência ao jogador
         self.passes = passes
         self.goals = goals
         self.assists = assists
         self.defenses = defenses
         self.meters = meters
-        Performance.performance_data[player.name] = self
-        Performance.save_to_json()
+        Performance.performance_data[player.name] = self  # Armazena o desempenho no dicionário
 
-    def update_performance(self, passes=None, goals=None, assists=None, defenses=None, meters=None):
+    def update_info(self, passes=None, goals=None, assists=None, defenses=None, meters=None):
         if passes is not None:
             self.passes = passes
         if goals is not None:
@@ -28,13 +28,12 @@ class Performance(Player):
 
     def to_dict(self):
         return {
-            "player_name": self.player.name,
+            "player_name": self.player.name,  # Acessa o nome do jogador através do atributo player
             "passes": self.passes,
             "goals": self.goals,
             "assists": self.assists,
             "defenses": self.defenses,
             "meters": self.meters
-            
         }
 
     @classmethod
@@ -65,10 +64,13 @@ class Performance(Player):
 
     def __str__(self):
         return (
-            f" Desempenho de {self.player.name}:\n"
-            f" Passes: {self.passes}\n"
-            f" Gols: {self.goals}\n"
-            f" Assistências: {self.assists}\n"
-            f" Defesas: {self.defenses}\n"
-            f" Metros percorridos: {self.meters}\n"
+            f"Desempenho de {self.player.name}:\n"
+            f"Passes: {self.passes}\n"
+            f"Gols: {self.goals}\n"
+            f"Assistências: {self.assists}\n"
+            f"Defesas: {self.defenses}\n"
+            f"Metros percorridos: {self.meters}\n"
         )
+        # classes e métodos abstratos
+        # encapsulamento e polimorfismo
+        # herança
