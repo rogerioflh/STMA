@@ -1,12 +1,11 @@
 import json
 import atexit
-from manager import menu_equipamentos, menu_eventos, menu_financeiro, menu_jogadores, menu_midia, menu_partidas, menu_principal, menu_recrutamento, menu_treinamentos
 import json
 import atexit
 from datetime import datetime
 from src.utils.financial import Financial
 from src.models.healthMonitor import HealthMonitor
-from src.utils.inventory import Inventory
+from src.services.inventory import Inventory
 from src.services.matchScheduler import MatchScheduler
 from src.services.mediaManager import MediaManager
 from src.models.player import Player

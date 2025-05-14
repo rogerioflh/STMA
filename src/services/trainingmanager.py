@@ -1,100 +1,122 @@
 import json
+import os
+from datetime import datetime
 from src.utils.event import Event
-import datetime
 
-class TrainingManager(Event):
-    training_sessions = []
-    loaded_ids = set()  
 
-    def __init__(self, type, date, time, duration, location, professional):
+def ensure_dir_exists(filename):
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+
+class TrainingSession(Event):
+    def __init__(self, type, date, time, duration, location, professional, status=False):
         super().__init__(type, date, time, location)
-        self.__duration = duration
-        self.__professional = professional
-        self.__status = False
+        self._duration = duration
+        self._professional = professional
+        self._status = status
 
-        if self.get_id() not in TrainingManager.loaded_ids:
-            TrainingManager.training_sessions.append(self)
-            TrainingManager.loaded_ids.add(self.get_id())
-            TrainingManager.save_to_json()
-        else:
-            print(f"Treino com ID {self.get_id()} já existe e não será adicionado novamente.")
-
-    # Getters
-    def get_duration(self):
-        return self.__duration
-    
-    def get_professional(self):
-        return self.__professional
-    
-    def get_status(self):
-        return self.__status
-    
-    # Setters
-    def set_duration(self, duration):
-        self.__duration = duration
-    
-    def set_professional(self, professional):
-        self.__professional = professional
-    
-    def set_status(self, status):
-        self.__status = status
-    
     def mark_completed(self):
-        self.__status = True
-        TrainingManager.save_to_json()
-        return f"Treinamento de {self.get_type()} em {self.get_date()} foi concluído."
+        self._status = True
 
     def check_status(self):
         try:
-            datetime_evento = datetime.strptime(f"{self.get_date()} {self.get_time()}", "%d/%m/%Y %H:%M")
-            if datetime_evento < datetime.now():
+            datetime_event = datetime.strptime(f"{self.get_date()} {self.get_time()}", "%d/%m/%Y %H:%M")
+            if datetime_event < datetime.now():
                 return "O treinamento já ocorreu."
-            else:
-                return "O treinamento ainda não ocorreu."
+            return "O treinamento ainda não ocorreu."
         except ValueError:
             return "Formato de data ou hora inválido."
 
-    @classmethod
-    def save_to_json(cls, filename="trainings.json"):
-        with open(filename, "w") as file:
-            json.dump([training.to_dict() for training in cls.training_sessions], file, indent=4)
+    def to_dict(self):
+        data = super().to_dict()
+        data.update({
+            "duration": self._duration,
+            "professional": self._professional,
+            "status": self._status
+        })
+        return data
+
+    def __str__(self):
+        status_text = "Concluído" if self._status else "Agendado"
+        return (
+            super().__str__() +
+            f"\nDuração: {self._duration} min\n"
+            f"Profissional: {self._professional}\n"
+            f"Status: {status_text}"
+        )
+
+
+class TrainingFacade:
+    _sessions = []
+    _loaded_ids = set()
 
     @classmethod
-    def load_from_json(cls, filename="trainings.json"):
+    def load(cls, filename="json/trainings.json"):
+        ensure_dir_exists(filename)
         try:
             with open(filename, "r") as file:
                 data = json.load(file)
-                cls.training_sessions = []  
-                cls.loaded_ids = set()  
+                cls._sessions.clear()
+                cls._loaded_ids.clear()
                 for item in data:
-                    if item["id"] not in cls.loaded_ids:  
-                        training = TrainingManager(
+                    if item["id"] not in cls._loaded_ids:
+                        session = TrainingSession(
                             item["type"],
                             item["date"],
                             item["time"],
                             item["duration"],
                             item["location"],
-                            item["professional"]
+                            item["professional"],
+                            item["status"]
                         )
-                        training.__status = item["status"]
-                        cls.training_sessions.append(training)
-                        cls.loaded_ids.add(item["id"])
+                        cls._sessions.append(session)
+                        cls._loaded_ids.add(item["id"])
         except FileNotFoundError:
             print(f"Arquivo {filename} não encontrado. Iniciando com lista vazia.")
+        except json.JSONDecodeError:
+            print(f"Erro ao ler o arquivo {filename}. Pode estar corrompido.")
 
-    def to_dict(self):
-        event_dict = super().to_dict()
-        event_dict.update({
-            "duration": self.__duration,
-            "professional": self.__professional,
-            "status": self.__status
-        })
-        return event_dict
+    @classmethod
+    def save(cls, filename="json/trainings.json"):
+        ensure_dir_exists(filename)
+        with open(filename, "w") as file:
+            json.dump([s.to_dict() for s in cls._sessions], file, indent=4)
 
-    def __str__(self):
-        status_text = "Concluído" if self.__status else "Agendado"
-        return super().__str__() + (
-            f"\nDuração: {self.__duration} min\n"
-            f"Profissional: {self.__professional}\n"
-            f"Status: {status_text}"
-        )
+    @classmethod
+    def add_session(cls, type, date, time, duration, location, professional):
+        new_session = TrainingSession(type, date, time, duration, location, professional)
+        if new_session.get_id() in cls._loaded_ids:
+            print(f"Treinamento com ID {new_session.get_id()} já existe.")
+            return None
+        cls._sessions.append(new_session)
+        cls._loaded_ids.add(new_session.get_id())
+        cls.save()
+        return new_session
+
+    @classmethod
+    def get_session_by_id(cls, session_id):
+        return next((s for s in cls._sessions if s.get_id() == session_id), None)
+
+    @classmethod
+    def list_sessions(cls):
+        for session in cls._sessions:
+            print(session)
+
+    @classmethod
+    def mark_completed(cls, session_id):
+        session = cls.get_session_by_id(session_id)
+        if session:
+            session.mark_completed()
+            cls.save()
+            return True
+        return False
+
+    @classmethod
+    def remove_session(cls, session_id):
+        session = cls.get_session_by_id(session_id)
+        if session:
+            cls._sessions.remove(session)
+            cls._loaded_ids.discard(session_id)
+            cls.save()
+            return True
+        return False

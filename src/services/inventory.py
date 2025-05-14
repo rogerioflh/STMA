@@ -2,10 +2,10 @@ import uuid
 import json
 
 class Inventory:
-    _inventory = {}  
+    _inventory = {}
 
     def __init__(self, type_object, sector, team, registration_year, last_use_date):
-        self._id = str(uuid.uuid4())[:8]  
+        self._id = str(uuid.uuid4())[:8]
         self._type_object = type_object
         self._sector = sector
         self._team = team
@@ -126,3 +126,29 @@ class Inventory:
     @classmethod
     def get_equipment_by_id(cls, equipment_id):
         return cls._inventory.get(equipment_id)
+
+class InventoryProxy:
+    def __init__(self, inventory: Inventory):
+        self._inventory = inventory
+
+    def toggle_availability(self):
+        print(f"[LOG] Trocando status de disponibilidade para: {not self._inventory.available}")
+        return self._inventory.toggle_availability()
+
+    def __str__(self):
+        return str(self._inventory)
+
+    def update_sector(self, new_sector):
+        print(f"[LOG] Atualizando setor de {self._inventory.id} para {new_sector}")
+        self._inventory.sector = new_sector
+
+    def update_last_use_date(self, new_date):
+        print(f"[LOG] Atualizando última data de uso para {new_date}")
+        self._inventory.last_use_date = new_date
+
+    def get_summary(self):
+        return {
+            "id": self._inventory.id,
+            "type": self._inventory.type_object,
+            "available": self._inventory.available
+        }

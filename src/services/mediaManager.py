@@ -1,12 +1,39 @@
 import json
+
+class Observer:
+    def update(self, event_type, data):
+        pass
+
+
+class MediaObserver(Observer):
+    def update(self, event_type, data):
+        print(f"[Notificação] Evento: {event_type} | Dados: {data}")
+
+
 class MediaManager:
-    _press_releases = []  # Atributo de classe encapsulado
+    _press_releases = []
+    _observers = []
 
     def __init__(self, title, content, date):
-        self._title = title  # Atributo encapsulado
+        self._title = title
         self._content = content
         self._date = date
-        MediaManager._press_releases.append(self)  # Adiciona à lista de releases
+        MediaManager._press_releases.append(self)
+        MediaManager.notify_observers("Novo Press Release", self.to_dict())
+
+    # Observer methods
+    @classmethod
+    def add_observer(cls, observer):
+        cls._observers.append(observer)
+
+    @classmethod
+    def remove_observer(cls, observer):
+        cls._observers.remove(observer)
+
+    @classmethod
+    def notify_observers(cls, event_type, data):
+        for observer in cls._observers:
+            observer.update(event_type, data)
 
     # Getters e Setters
     @property
@@ -40,34 +67,37 @@ class MediaManager:
             f" Data: {self._date}"
         )
 
-    # Método para buscar um press release por título
+    def to_dict(self):
+        return {
+            "title": self._title,
+            "content": self._content,
+            "date": self._date
+        }
+
+    # CRUD
     @classmethod
     def get_release_by_title(cls, title):
-        for release in cls._press_releases:
-            if release.title == title:
-                return release
-        return None
+        return next((r for r in cls._press_releases if r.title == title), None)
 
-    # Método para remover um press release
     @classmethod
     def remove_release(cls, title):
         release = cls.get_release_by_title(title)
         if release:
             cls._press_releases.remove(release)
+            cls.notify_observers("Remoção de Press Release", {"title": title})
             print(f"Press Release '{title}' removido!")
         else:
             print(f"Press Release '{title}' não encontrado.")
 
-    # Método para listar todos os press releases
     @classmethod
     def list_releases(cls):
         for release in cls._press_releases:
             print(release)
-            
+
     @classmethod
     def save_to_json(cls, filename="press_releases.json"):
         with open(filename, "w") as file:
-            json.dump([release.__dict__ for release in cls._press_releases], file, indent=4)
+            json.dump([release.to_dict() for release in cls._press_releases], file, indent=4)
 
     @classmethod
     def load_from_json(cls, filename="press_releases.json"):
@@ -76,7 +106,7 @@ class MediaManager:
                 data = json.load(file)
                 cls._press_releases = []
                 for item in data:
-                    release = MediaManager(item["_title"], item["_content"], item["_date"])
+                    release = MediaManager(item["title"], item["content"], item["date"])
                     cls._press_releases.append(release)
         except FileNotFoundError:
             print(f"Arquivo {filename} não encontrado. Iniciando com lista vazia.")

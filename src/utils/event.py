@@ -1,78 +1,86 @@
 from abc import ABC, abstractmethod
-import json
 import uuid
 from datetime import datetime
 
+
 class Event(ABC):
     def __init__(self, type, date, time, location):
-        self.__id = self.generate_id() 
-        self.__type = type.capitalize()
-        self.__date = date
-        self.__time = time
-        self.__location = location
-    
+        self._id = self._generate_id()
+        self._type = type.capitalize()
+        self._date = date
+        self._time = time
+        self._location = location
+
     @staticmethod
-    def generate_id():
-        return str(uuid.uuid4()) 
-    
+    def _generate_id():
+        return str(uuid.uuid4())
+
     # Getters
     def get_id(self):
-        return self.__id
-    
+        return self._id
+
     def get_type(self):
-        return self.__type
-    
+        return self._type
+
     def get_date(self):
-        return self.__date
-    
+        return self._date
+
     def get_time(self):
-        return self.__time
-    
+        return self._time
+
     def get_location(self):
-        return self.__location
-    
+        return self._location
+
     # Setters
     def set_type(self, type):
-        self.__type = type.capitalize()
-    
+        self._type = type.capitalize()
+
     def set_date(self, date):
-        self.__date = date
-    
+        self._date = date
+
     def set_time(self, time):
-        self.__time = time
-    
+        self._time = time
+
     def set_location(self, location):
-        self.__location = location
-    
+        self._location = location
+
     def update_event_details(self, type=None, date=None, time=None, location=None):
-        if type:
+        if type is not None:
             self.set_type(type)
-        if date:
+        if date is not None:
             self.set_date(date)
-        if time:
+        if time is not None:
             self.set_time(time)
-        if location:
+        if location is not None:
             self.set_location(location)
+
+    def is_upcoming(self):
+        """Verifica se o evento ainda não aconteceu."""
+        try:
+            event_datetime = datetime.strptime(f"{self._date} {self._time}", "%d/%m/%Y %H:%M")
+            return event_datetime > datetime.now()
+        except ValueError:
+            return False  # Se data ou hora forem inválidas
 
     @abstractmethod
     def check_status(self):
-        #Método abstrato para verificar o status do evento.
+        """Método abstrato que deve verificar o status do evento."""
         pass
 
     def to_dict(self):
         return {
-            "id": self.__id,
-            "type": self.__type,
-            "date": self.__date,
-            "time": self.__time,
-            "location": self.__location
+            "id": self._id,
+            "type": self._type,
+            "date": self._date,
+            "time": self._time,
+            "location": self._location
         }
 
     def __str__(self):
         return (
-            f"ID: {self.__id}\n"
-            f"Tipo: {self.__type}\n"
-            f"Data: {self.__date}\n"
-            f"Hora: {self.__time}\n"
-            f"Localização: {self.__location}"
+            f"ID: {self._id}\n"
+            f"Tipo: {self._type}\n"
+            f"Data: {self._date}\n"
+            f"Hora: {self._time}\n"
+            f"Localização: {self._location}"
         )

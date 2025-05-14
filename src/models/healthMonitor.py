@@ -1,26 +1,43 @@
 import json
 from src.models.player import Player
 
+class Observer:
+    def update(self, player_name, injury_report):
+        raise NotImplementedError("Observer subclasses must implement 'update' method.")
+
 class HealthMonitor:
-    health_records = {}  
+    health_records = {}
+    observers = []
 
     def __init__(self, player, injury_report):
-        self.player = player  
+        self.player = player
         self.injury_report = injury_report
-        HealthMonitor.health_records[player.name] = self 
+        HealthMonitor.health_records[player.name] = self
+        self.notify_observers()
 
     def update_info(self, injury_report):
         self.injury_report = injury_report
         HealthMonitor.save_to_json()
+        self.notify_observers()
 
     def get_health_status(self):
         return self.injury_report
 
-    def to_dici(self):
+    def to_dict(self):
         return {
-            "player_name": self.player.name,  
+            "player_name": self.player.name,
             "injury_report": self.injury_report
         }
+
+    @classmethod
+    def register_observer(cls, observer):
+        cls.observers.append(observer)
+
+    @classmethod
+    def notify_observers(cls):
+        for observer in cls.observers:
+            for record in cls.health_records.values():
+                observer.update(record.player.name, record.injury_report)
 
     @classmethod
     def save_to_json(cls, filename="health_records.json"):
