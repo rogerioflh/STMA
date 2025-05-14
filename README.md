@@ -1,42 +1,71 @@
-| **Implementação**                          | **O que faz**                                                                    | **Como ficou no código**                                                                                                                                               |
-| ------------------------------------------ | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `class HealthMonitor`                      | Classe principal que representa o monitoramento da condição médica de um atleta. | `python<br>class HealthMonitor:<br>    def __init__(self, atleta):<br>        self.atleta = atleta<br>        self.status = "Apto"<br>        self.historico = []<br>` |
-| `atualizar_status(self, novo_status: str)` | Atualiza o status clínico do atleta e registra a alteração no histórico.         | `python<br>def atualizar_status(self, novo_status: str):<br>    self.status = novo_status<br>    self.historico.append(novo_status)<br>`                               |
-| `esta_apto(self) -> bool`                  | Retorna `True` se o atleta estiver apto, `False` caso contrário.                 | `python<br>def esta_apto(self) -> bool:<br>    return self.status == "Apto"<br>`                                                                                       |
-| `relatorio_status(self) -> str`            | Gera um relatório do status atual e do histórico do atleta.                      | `python<br>def relatorio_status(self) -> str:<br>    return f"Status atual: {self.status}\\nHistórico: {', '.join(self.historico)}"<br>`                               |
+# Sports Team Management App
+
+## Implementation of system requested in software project discipline
+
+**Student** : Marta Mirely Nascimento dos Santos
+
+**Teacher** : Baldoíno Fonseca
+
+**How to run the project** : 
+
+* Clone the repository using: 
+
+ `git clone -project address`
+
+ * Access the project folder:
+
+ `cd project`
+
+ * Run the file main.py:
+
+ `python main.py`
+
+**Required resources** : Any version from Python 3 onwards
 
 
-| **Implementação**                        | **O que faz**                                                           | **Como ficou no código**                                                                                                                                                                                                                                                                                                                                                    |
-| ---------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `class AvaliacaoDesempenho`              | Representa uma avaliação física/técnica de um atleta.                   | `python<br>class AvaliacaoDesempenho:<br>    def __init__(self, atleta):<br>        self.atleta = atleta<br>        self.avaliacoes = []<br>`                                                                                                                                                                                                                               |
-| `registrar_avaliacao(self, dados: dict)` | Adiciona uma nova avaliação com dados como resistência, velocidade etc. | `python<br>def registrar_avaliacao(self, dados: dict):<br>    self.avaliacoes.append(dados)<br>`                                                                                                                                                                                                                                                                            |
-| `calcular_media(self)`                   | Calcula a média dos valores numéricos das avaliações.                   | `python<br>def calcular_media(self):<br>    if not self.avaliacoes:<br>        return 0<br>    total, count = 0, 0<br>    for avaliacao in self.avaliacoes:<br>        for valor in avaliacao.values():<br>            if isinstance(valor, (int, float)):<br>                total += valor<br>                count += 1<br>    return total / count if count else 0<br>` |
-| `gerar_relatorio(self)`                  | Gera um relatório com todas as avaliações e a média geral.              | `python<br>def gerar_relatorio(self):<br>    relatorio = f"Avaliações de {self.atleta}:\\n"<br>    for i, av in enumerate(self.avaliacoes, 1):<br>        relatorio += f"{i}) {av}\\n"<br>    relatorio += f"Média geral: {self.calcular_media():.2f}"<br>    return relatorio<br>`                                                                                         |
+**Implemeted features:**
 
 
-| **Implementação**                     | **O que faz**                               | **Como ficou no código**                                                                                                                                                                                                                                           |
-| ------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `class Usuario`                       | Classe base para todos os tipos de usuário. | `python<br>class Usuario:<br>    def __init__(self, nome, usuario, senha, funcao):<br>        self.nome = nome<br>        self.usuario = usuario<br>        self.senha_hash = bcrypt.hashpw(senha.encode(), bcrypt.gensalt())<br>        self.funcao = funcao<br>` |
-| `class Tecnico(Usuario)`              | Subclasse com atributo: especialização.     | `python<br>class Tecnico(Usuario):<br>    def __init__(self, nome, usuario, senha, especializacao):<br>        super().__init__(nome, usuario, senha, "Tecnico")<br>        self.especializacao = especializacao<br>`                                              |
-| `class Atleta(Usuario)`               | Subclasse com atributo: posição.            | `python<br>class Atleta(Usuario):<br>    def __init__(self, nome, usuario, senha, posicao):<br>        super().__init__(nome, usuario, senha, "Atleta")<br>        self.posicao = posicao<br>`                                                                     |
-| `class SecretarioFinanceiro(Usuario)` | Subclasse com atributo: setor.              | `python<br>class SecretarioFinanceiro(Usuario):<br>    def __init__(self, nome, usuario, senha, setor):<br>        super().__init__(nome, usuario, senha, "Financeiro")<br>        self.setor = setor<br>`                                                         |
-| `class Gerente(Usuario)`              | Subclasse com atributo: departamento.       | `python<br>class Gerente(Usuario):<br>    def __init__(self, nome, usuario, senha, departamento):<br>        super().__init__(nome, usuario, senha, "Gerente")<br>        self.departamento = departamento<br>`                                                    |
+1. Team Roster Management
+
+- Implemented class: Player
+
+2. Match Scheduling
+
+- Implemented class: MatchScheduler
+
+3. Performance Tracking
+
+- Implemented class: Performance
+
+4. Injury and Health Monitoring
+
+- Implemented class: HealthMonitor
+
+5. Training Schedule Management
+
+- Implemented class: TrainingManager
+
+6. Equipment Inventory Management
+
+- Implemented class: Inventory
+
+7. Player Recruitment
+
+- Implemented class: RecruitmentManager
+
+8. Financial Management
+
+- Implemented class: Financial
+
+9. Media and Public Relations
+
+- Implemented class: MediaManager
+
+10. Fan Engagement Tools
+
+-It was not implemented because I did not find an interesting way to show this correctly in this version.
 
 
-| **Implementação**      | **O que faz**                                                                 | **Como ficou no código**                                                                                                                                                         |
-| ---------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `class UsuarioFactory` | Centraliza a criação de objetos de usuário com base na função.                | `python<br>class UsuarioFactory:<br>    @staticmethod<br>    def criar_usuario():<br>        ... # lógica de criação por input<br>`                                              |
-| `criar_usuario()`      | Solicita os dados e instancia o objeto correspondente (Atleta, Técnico etc.). | `python<br>if funcao == "Tecnico":<br>    especializacao = input("Especialização: ")<br>    return Tecnico(nome, usuario, senha, especializacao)<br># (idem para os outros)<br>` |
-
-
-| **Implementação**                          | **O que faz**                                                            | **Como ficou no código**                                                                                                                                                                                                     |
-| ------------------------------------------ | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `class GerenciadorUsuarios`                | Classe principal para gerenciar usuários e autenticação.                 | `python<br>class GerenciadorUsuarios:<br>    def __init__(self):<br>        self.usuarios = []<br>        self.carregar_usuarios()<br>`                                                                                      |
-| `autenticar_usuario(self, usuario, senha)` | Verifica usuário e senha usando bcrypt.                                  | `python<br>def autenticar_usuario(self, usuario, senha):<br>    for u in self.usuarios:<br>        if u.usuario == usuario and bcrypt.checkpw(senha.encode(), u.senha_hash):<br>            return u<br>    return None<br>` |
-| `criar_usuario(self)`                      | Usa a factory para criar novo usuário.                                   | `python<br>def criar_usuario(self):<br>    novo_usuario = UsuarioFactory.criar_usuario()<br>    self.usuarios.append(novo_usuario)<br>    self.salvar_usuarios()<br>`                                                        |
-| `listar_usuarios(self)`                    | Exibe todos os usuários com nome e função.                               | `python<br>def listar_usuarios(self):<br>    for u in self.usuarios:<br>        print(f"{u.nome} - {u.funcao}")<br>`                                                                                                         |
-| `salvar_usuarios(self)`                    | Salva os usuários no arquivo `usuarios.json` (sem senha em texto plano). | `python<br>with open("usuarios.json", "w") as f:<br>    json.dump([...], f)<br>`                                                                                                                                             |
-| `carregar_usuarios(self)`                  | Lê `usuarios.json` e recria os objetos conforme o tipo.                  | `python<br>with open("usuarios.json") as f:<br>    data = json.load(f)<br>    # lógica para recriar Atleta, Técnico, etc.<br>`                                                                                               |
-| `exibir_menu(self)`                        | Exibe menu de ações (criar, listar, menu jogadores, sair).               | `python<br>def exibir_menu(self):<br>    while True:<br>        print("1. Criar novo usuário\\n2. Listar usuários\\n3. Menu Jogadores\\n4. Sair")<br>        escolha = input("Escolha: ")<br>`                               |
 
 
